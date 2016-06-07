@@ -1,0 +1,14 @@
+{
+  "name": "main-package",
+  "version": "0.0.1",
+  "packageDependencies": {
+    "api-package1": "*",
+    "api-package2": "*",
+    "build-package1": "*",
+    "cli-package1": "*",
+    "cli-package2": "*",
+    "socket-api-package1": "*",
+    "ui-package1": "*",
+    "ui-package2": "*"
+  }
+}

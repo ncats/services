@@ -1,0 +1,47 @@
+{
+  "name": "services",
+  "namespace": "",
+  "main": "./",
+  "version": "v0.16.607",
+  "description": "LabShare API service manager",
+  "private": true,
+  "contributors": "https://github.com/LabShare/services/graphs/contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LabShare/services.git"
+  },
+  "scripts": {
+    "pretest": "node -e 'process.exit(0)'",
+    "test": "jasmine-node --captureExceptions --color ./test/lib/unit"
+  },
+  "bugs": {
+    "url": "https://github.com/LabShare/services/issues"
+  },
+  "license": "MIT",
+  "packageDependencies": {},
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "glob": "^7.0.3",
+    "lodash": "^4.13.1",
+    "morgan": "^1.7.0",
+    "q": "^1.4.1",
+    "restler": "^3.4.0",
+    "revalidator": "^0.3.1",
+    "socket.io": "^1.4.6",
+    "socket.io-client": "^1.4.6"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.2",
+    "jasmine-core": "^2.2.0",
+    "jasmine-node": "^1.14.5",
+    "mock-fs": "^3.9.0",
+    "promise-matchers": "^0.9.5",
+    "proxyquire": "^1.4.0",
+    "sinon": "^1.14.1",
+    "socket.io-client": "^1.4.5",
+    "supertest": "^1.2.0",
+    "supertest-as-promised": "^3.0.0"
+  }
+}

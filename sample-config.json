@@ -1,0 +1,22 @@
+{
+  "services": {
+    "Listen": {
+      "Port": "8600",
+      "Url": "http://127.0.0.1"
+    },
+    "Socket": {
+      "Connections": []
+    },
+    "Auth": {
+      "Providers": [
+        "google",
+        "azure",
+        "nih/wsfed"
+      ],
+      "Url": "https://a.labshare.org"
+    },
+    "ServiceUrl": "",
+    "ServicePath": "",
+    "LoadServices": false
+  }
+}
