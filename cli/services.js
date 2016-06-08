@@ -3,7 +3,7 @@
 const Services = require('../lib/services');
 
 exports.usage = [
-    'lsc services start      - Start LabShare API services',
+    'lsc services start      - Start up LabShare API services.',
     ''
 ];
 

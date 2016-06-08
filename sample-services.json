@@ -1,0 +1,28 @@
+{
+  "apps": [
+    {
+      "script": "lsc",
+      "name": "api1",
+      "interpreter": "none",
+      "args": "services start",
+      "cwd": "/Users/virtanevakd/Desktop/Programming/services",
+      "force": true
+    },
+    {
+      "script": "lsc",
+      "name": "api2",
+      "interpreter": "none",
+      "args": "services start",
+      "cwd": "/Users/virtanevakd/Desktop/Programming/ls-shell",
+      "force": true,
+    },
+    {
+      "script": "lsc",
+      "name": "api3",
+      "interpreter": "none",
+      "args": "services start",
+      "cwd": "/Users/virtanevakd/Desktop/Programming/facility",
+      "force": true
+    }
+  ]
+}
