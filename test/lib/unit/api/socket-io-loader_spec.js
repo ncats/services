@@ -1,13 +1,15 @@
-var path = require('path'),
+'use strict';
+
+const path = require('path'),
     proxyquire = require('proxyquire'),
     express = require('express'),
-    EventEmitter = require('events').EventEmitter;
+    {EventEmitter} = require('events');
 
 require('promise-matchers');
 
 describe('SocketIOLoader', function () {
 
-    var SocketIOLoader,
+    let SocketIOLoader,
         socketLoader,
         expressApp,
         packagePath,
@@ -52,20 +54,17 @@ describe('SocketIOLoader', function () {
                 }
             }
         });
-        socketLoader = new SocketIOLoader(expressApp, options);
+        socketLoader = new SocketIOLoader(options);
     });
 
     it('throws an exception when invalid arguments and/or options are provided', function () {
         expect(function () {
-            new SocketIOLoader()
-        }).toThrow();
-        expect(function () {
-            new SocketIOLoader(expressApp, {
+            new SocketIOLoader({
                 main: [123]
             });
         }).toThrow();
         expect(function () {
-            new SocketIOLoader(expressApp, {
+            new SocketIOLoader({
                 directories: ['a/directory', 5]
             });
         }).toThrow();
@@ -73,7 +72,7 @@ describe('SocketIOLoader', function () {
 
     it('does not throw if options are not provided', function () {
         expect(function () {
-            new SocketIOLoader(expressApp);
+            new SocketIOLoader();
         }).not.toThrow();
     });
 
@@ -89,7 +88,7 @@ describe('SocketIOLoader', function () {
                 done();
             });
             
-            socketLoader.connect();
+            socketLoader.connect(expressApp);
 
             // Fake the initial and subsequent 'socket.io' connection events
             socketInstanceStub.emit('connection', socketInstanceStub);
@@ -108,8 +107,8 @@ describe('SocketIOLoader', function () {
                 done(); 
             });
             
-            socketLoader = new SocketIOLoader(expressApp, options);
-            socketLoader.connect();
+            socketLoader = new SocketIOLoader(options);
+            socketLoader.connect(expressApp);
 
             socketClientStub.emit('process-something', 'Data');
         });
