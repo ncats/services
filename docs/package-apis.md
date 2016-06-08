@@ -57,12 +57,13 @@ By default, the config function will be called with an object containing the fol
 | services        | Object     | An instantiated `Services` class. It contains methods related to loading and starting API services. |
 | app             | Object     | An instantiated Express router used by the `Services` class. |
 
-The instantiated `services` contains the following public methods:
+The instantiated `services` contains the following public properties:
 | Name              | Type      | Description                                                       |
 |:----------------- |:---------:| :-----------------------------------------------------------------|
 | isSiteActive        | Function                | Returns true after `services.expressStatic` is called. |
 | start                 | Function | Starts all the API routes and Socket connections. |
 | io                  | Function | Returns an instantiated instance of `Socket.IO` |
+| app                 | Object   | The instantiated Express app |
 
 ##Socket.io APIs
 

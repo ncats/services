@@ -7,16 +7,6 @@
     "Socket": {
       "Connections": []
     },
-    "Auth": {
-      "Providers": [
-        "google",
-        "azure",
-        "nih/wsfed"
-      ],
-      "Url": "https://a.labshare.org"
-    },
-    "ServiceUrl": "",
-    "ServicePath": "",
-    "LoadServices": false
+    "ServicePath": ""
   }
 }
