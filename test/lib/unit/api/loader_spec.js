@@ -1,8 +1,10 @@
-var path = require('path'),
+'use strict';
+
+const path = require('path'),
     proxyquire = require('proxyquire'),
     supertest = require('supertest-as-promised'),
     express = require('express'),
-    Router = require('express').Router,
+    {Router} = express,
     Q = require('q'),
     _ = require('lodash');
 
@@ -10,10 +12,6 @@ require('promise-matchers');
 
 function allArgs(spy) {
     return _.flatten(_.map(spy.calls, 'args'));
-}
-
-function allArgErrorMessages(spy) {
-    return _.map(allArgs(spy), 'message');
 }
 
 describe('ApiLoader', function () {
@@ -126,13 +124,12 @@ describe('ApiLoader', function () {
             apiLoader.initialize();
             apiLoader.setAPIs();
 
-            var errors = allArgErrorMessages(options.logger.error),
-                expectedErrorSuffix = 'must define a httpMethod, a path, and middleware';
+            var errors = allArgs(options.logger.error).join(' ');
 
-            expect(errors).toContain('Invalid HTTP method specified for route /list/:listName/items/:id from package api-package-2');
-            expect(errors).toContain('Invalid route: POST unknown from package api-package-2 ' + expectedErrorSuffix);
-            expect(errors).toContain('Invalid route: DELETE /list/:listName/items/:id from package api-package-2 ' + expectedErrorSuffix);
-            expect(errors).toContain('Invalid route: ? /documents from package api-package-2 ' + expectedErrorSuffix);
+            expect(errors).toContain('Error: Invalid HTTP method specified for route /list/:listName/items/:id from package api-package-2');
+            expect(errors).toContain('Error: Invalid route "{"httpMethod":"POST","middleware":[null]}" from package "api-package-2": path is required');
+            expect(errors).toContain('Error: Invalid route "{"path":"/list/:listName/items/:id","httpMethod":"DELETE"}" from package "api-package-2": middleware is required');
+            expect(errors).toContain('Error: Invalid route "{"path":"/documents","middleware":[null]}" from package "api-package-2": httpMethod is required');
         });
 
         it('throws exceptions for invalid routes if a logger is not provided', function () {
