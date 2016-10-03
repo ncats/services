@@ -1,100 +1,83 @@
-var proxyquire = require('proxyquire'),
-    EventEmitter = require('events').EventEmitter;
+'use strict';
 
-describe('Auth User', function () {
+const proxyquire = require('proxyquire'),
+    nock = require('nock');
 
-    var authUser,
-        requestMock,
-        responseMock,
-        restlerMock,
+describe('Auth User', () => {
+
+    let authUser,
+        authMe,
         token;
 
-    beforeEach(function () {
+    beforeEach(() => {
         token = 'a token';
-
-        restlerMock = new EventEmitter();
-        restlerMock.get = jasmine.createSpy('get').andReturn(restlerMock);
-
-        requestMock = jasmine.createSpy('request');
-        responseMock = {
-            statusCode: 200
-        };
-
-        authUser = proxyquire('../../../../lib/auth/user', {
-            'restler': restlerMock
-        });
+        authMe = nock('https://a.labshare.org').get('/_api/auth/me');
+        authUser = require('../../../../lib/auth/user');
     });
 
-    it('throws with invalid arguments', function () {
-        expect(function () {
+    afterEach(() => {
+        nock.cleanAll();
+    });
+
+    it('throws with invalid arguments', () => {
+        expect(() => {
             authUser(token, null);
         }).toThrow();
     });
 
-    it('fails if the token is missing or empty', function (done) {
-        authUser('', function (error) {
+    it('fails if the token is missing or empty', done => {
+        authUser('', error => {
             expect(error.message).toMatch(/Invalid token/i);
             done();
         });
     });
 
-    it('succeeds after successfully authenticating', function (done) {
-        var userData = {
+    it('succeeds after successfully authenticating', done => {
+        let userData = {
             username: 'smithm',
             email: 'email@example.com'
         };
-        authUser(token, function (error, data) {
+
+        authMe.reply(200, () => {
+            expect(authMe.req.headers['auth-token']).toBe(token);
+            return userData;
+        });
+
+        authUser(token, (error, data) => {
             expect(error).toBeNull();
-            expect(data).toBe(userData);
-            expect(restlerMock.get).toHaveBeenCalledWith(jasmine.any(String), {headers: {'auth-token': token}});
+            expect(data).toEqual(userData);
             done();
         });
-        restlerMock.emit('complete', userData, responseMock);
     });
 
-    it('fails if the auth response has an invalid format', function (done) {
-        var userData = {
+    it('fails if the auth response has an invalid format', done => {
+        let userData = {
             username: null,
             email: 'notAnEmail'
         };
-        authUser(token, function (error, data) {
+
+        authMe.reply(200, userData);
+
+        authUser(token, (error, data) => {
             expect(error.message).toContain('invalid');
             expect(data).toBeUndefined();
-            expect(restlerMock.get).toHaveBeenCalledWith(jasmine.any(String), {headers: {'auth-token': token}});
             done();
         });
-        restlerMock.emit('complete', userData, responseMock);
     });
 
-    it('fails if the response status is not 200', function (done) {
-        responseMock.statusCode = 500;
+    it('fails if the response status is not 200', done => {
+        authMe.reply(500, {});
 
-        authUser(token, function (error, data) {
+        authUser(token, (error, data) => {
             expect(error).toBe(500);
             expect(data).toBeUndefined();
-            expect(restlerMock.get).toHaveBeenCalledWith(jasmine.any(String), {headers: {'auth-token': token}});
             done();
         });
-
-        restlerMock.emit('complete', null, responseMock);
     });
 
-    it('fails if the response data is an error', function (done) {
-        var authError = new Error('auth error');
+    describe('when a global token cache exists', () => {
 
-        authUser(token, function (error, data) {
-            expect(error).toBe(authError);
-            expect(data).toBeUndefined();
-            expect(restlerMock.get).toHaveBeenCalledWith(jasmine.any(String), {headers: {'auth-token': token}});
-            done();
-        });
-
-        restlerMock.emit('complete', authError, responseMock);
-    });
-
-    describe('when a token cache exists', function () {
-
-        beforeEach(function () {
+        beforeEach(() => {
             global.LabShare = {
                 Tokens: {
                     getUserForToken: jasmine.createSpy('getUserForToken')
@@ -102,18 +85,19 @@ describe('Auth User', function () {
             }
         });
 
-        afterEach(function () {
+        afterEach(() => {
             delete global.LabShare;
             expect(global.LabShare).toBeUndefined();  // sanity check
         });
 
-        it('gets the user from a token cache instead', function (done) {
+        it('gets the user from a token cache instead', done => {
             var user = {id: '12345'};
+
             global.LabShare.Tokens.getUserForToken.andReturn(user);
-            authUser(token, function (error, data) {
+
+            authUser(token, (error, data) => {
                 expect(error).toBeNull();
                 expect(data).toBe(user);
-                expect(restlerMock.get).not.toHaveBeenCalled();
                 done();
             });
         });

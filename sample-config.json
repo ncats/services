@@ -11,6 +11,7 @@
     "Auth": {
       "Url": "https://a.labshare.org",
       "ServicePath": "/_api"
-    }
+    },
+    "Secret": ""
   }
 }

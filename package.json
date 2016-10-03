@@ -21,8 +21,10 @@
   "packageDependencies": {},
   "dependencies": {
     "body-parser": "^1.15.1",
+    "cookie-parser": "^1.4.3",
     "cors": "^2.7.1",
     "express": "^4.13.4",
+    "express-session": "^1.14.1",
     "glob": "^7.0.3",
     "lodash": "^4.13.1",
     "morgan": "^1.7.0",
@@ -37,6 +39,7 @@
     "jasmine-core": "^2.2.0",
     "jasmine-node": "^1.14.5",
     "mock-fs": "^3.9.0",
+    "nock": "^8.0.0",
     "promise-matchers": "^0.9.5",
     "proxyquire": "^1.4.0",
     "sinon": "^1.14.1",
