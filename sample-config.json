@@ -12,6 +12,10 @@
       "Url": "https://a.labshare.org",
       "ServicePath": "/_api"
     },
-    "Secret": ""
+    "Secret": "",
+    "HTTPS": {
+      "PrivateKey": "",
+      "Certificate": ""
+    }
   }
 }

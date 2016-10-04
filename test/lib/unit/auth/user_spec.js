@@ -1,7 +1,6 @@
 'use strict';
 
-const proxyquire = require('proxyquire'),
-    nock = require('nock');
+const nock = require('nock');
 
 describe('Auth User', () => {
 
