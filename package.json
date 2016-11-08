@@ -12,7 +12,8 @@
   },
   "scripts": {
     "pretest": "node -e 'process.exit(0)'",
-    "test": "jasmine-node --captureExceptions --color ./test/lib/unit"
+    "test": "jasmine-node --captureExceptions --color ./test/lib/unit",
+    "coverage": "istanbul cover jasmine-node --captureExceptions ./test/lib/unit"
   },
   "bugs": {
     "url": "https://github.com/LabShare/services/issues"
