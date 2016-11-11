@@ -14,7 +14,6 @@ the following properties:
 | httpMethod | String | It can be one of 'GET', 'POST', 'PUT', and 'DELETE'. |
 | path | String | The relative API resource path (e.g. '/users/create'). |
 | middleware | Array or Function | One or more Express JS middleware functions. You can define more than one middleware function by assigning an array of middleware functions to the middleware property.  For more information on creating Express JS middleware, visit: [Express documentation](http://expressjs.com/guide/using-middleware.html).  |
-| [accessLevel] | String | Optional role based authorization for the route. One of ['public', 'user', 'staff', 'admin']. Default: 'public'. |
 
 Example:
 
