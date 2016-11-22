@@ -1,7 +1,6 @@
-var accessLevels = require('../../../../lib/auth').AccessLevels,
-    userRoles = require('../../../../lib/auth').UserRoles;
+'use strict';
 
-describe('ensureAuthorized', function () {
+describe('ensureAuthorized', () => {
 
     var ensureAuthorized,
         middleware,
@@ -10,7 +9,7 @@ describe('ensureAuthorized', function () {
         route,
         next;
 
-    beforeEach(function () {
+    beforeEach(() => {
         requestMock = jasmine.createSpy('request');
         responseMock = {
             sendStatus: jasmine.createSpy('send')
@@ -20,17 +19,17 @@ describe('ensureAuthorized', function () {
         ensureAuthorized = require('../../../../lib/auth/ensure-authorized');
     });
 
-    it('throws with invalid arguments', function () {
-        expect(function () {
+    it('throws with invalid arguments', () => {
+        expect(() => {
             ensureAuthorized(null);
         }).toThrow();
     });
 
-    it('allows users to access routes that match their role', function () {
-        route = { accessLevel: accessLevels.public };
+    it('allows users to access routes that match their role', () => {
+        route = { accessLevel: 'public' };
         middleware = ensureAuthorized(route);
         requestMock.user = {
-            role: userRoles.public
+            role: 'public'
         };
 
         middleware(requestMock, responseMock, next);
@@ -38,8 +37,8 @@ describe('ensureAuthorized', function () {
         expect(next).toHaveBeenCalled();
     });
 
-    it('prevents users from accessing routes that do not match their role', function () {
-        route = { accessLevel: accessLevels.admin };
+    it('prevents users from accessing routes that do not match their role', () => {
+        route = { accessLevel: 'admin' };
         middleware = ensureAuthorized(route);
         requestMock.user = null;
 
@@ -48,11 +47,11 @@ describe('ensureAuthorized', function () {
         expect(responseMock.sendStatus).toHaveBeenCalledWith(403);
     });
 
-    it('defaults to accessLevel "public" if a route does not define an "accessLevel"', function () {
+    it('defaults to accessLevel "public" if a route does not define an "accessLevel"', () => {
         route = { accessLevel: null };
         middleware = ensureAuthorized(route);
         requestMock.user = {
-            role: userRoles.public
+            role: 'public'
         };
 
         middleware(requestMock, responseMock, next);
@@ -60,7 +59,7 @@ describe('ensureAuthorized', function () {
         expect(next).toHaveBeenCalled();
     });
 
-    it('allows userRoles to be aliased as strings (e.g. "public" gets converted to {bitMask: 1, title: "public"})', function () {
+    it('allows userRoles to be aliased as strings', () => {
         route = { accessLevel: null };
         middleware = ensureAuthorized(route);
         requestMock.user = {
