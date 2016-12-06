@@ -1,54 +1,41 @@
 'use strict';
 
 
-describe('userRoles', function() {
-    var userRoles,
-        accessLevels,
-        bitMask,
-        accessLevels,
-        title,
-        buildRoles;
-    beforeEach(function(){
-        userRoles = {};
-        bitMask = "01";
-        accessLevels = {};
-        title = {};
-        buildRoles = require('./user-roles');
-    });
-    // toMatch(), may be needs to change
-   /* it('fails if the argument is missing or empty', function() {
-        buildRoles('',()=> {
-            expect(bitMask).toEqual("01");
-            done();
-        });
-        expect(() => {
-            buildRoles(userRoles);
-        }).toThrow();
-    });*/
-    //
-    it('fails with invalid arguments', done => {
-        let userRoles = {
-            roles: ['private']
-        };
-        let bitmask = "01";
-        expect(() => {
-            buildRoles(userRoles);
-        }).toEqual("");
-    });
-    //
-    it('Builds a distinct bit mask for each role', done => {
-       let userRoles = {
-           roles:['public'],
-           accessLevels:{'public': "*"}
-       };
 
-        buildRoles(userRoles, (error, data) => {
-            expect(error).toBeNull();
-            expect(data).toEqual(userRoles);
-            done();
-        });
+describe('userRoles', ()=> {
+    let
+        accessLevels,
+        userRoles,
+        buildRolesResult,
+        buildAccessLevelsResult;
+
+
+    beforeEach(() => {
+        buildRolesResult =  {
+            public : { bitMask : 1, title : 'public' },
+            user : { bitMask : 2, title : 'user' },
+            staff : { bitMask : 4, title : 'staff' },
+            admin : { bitMask : 8, title : 'admin' }
+        } ;
+        buildAccessLevelsResult = {
+            public : { bitMask : 15, title : '*' },
+            anon : { bitMask : 1, title : 'public' },
+            user : { bitMask : 14, title : 'admin' },
+            staff : { bitMask : 12, title : 'admin' },
+            admin : { bitMask : 8, title : 'admin' }
+        };
+
+        userRoles = require('../../../../lib/auth/user-roles').userRoles;
+        accessLevels = require('../../../../lib/auth/user-roles').accessLevels;
+
     });
-    //
+
+    it('success with correct userRoles', ()=> {
+        expect(userRoles).toEqual(buildRolesResult);
+    });
+
+    it('success with correct accessLevels', ()=> {
+        expect(accessLevels).toEqual(buildAccessLevelsResult);
+    });
 
 });
-
