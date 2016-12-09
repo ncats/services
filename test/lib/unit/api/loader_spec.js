@@ -1,22 +1,19 @@
 'use strict';
 
 const path = require('path'),
-    proxyquire = require('proxyquire'),
     supertest = require('supertest-as-promised'),
     express = require('express'),
     {Router} = express,
     Q = require('q'),
     _ = require('lodash');
 
-require('promise-matchers');
-
 function allArgs(spy) {
-    return _.flatten(_.map(spy.calls, 'args'));
+    return _.flatten(_.map(spy.calls.all(), 'args'));
 }
 
-describe('ApiLoader', function () {
+describe('ApiLoader', () => {
 
-    var ApiLoader,
+    let ApiLoader,
         apiLoader,
         expressApp,
         router,
@@ -24,39 +21,30 @@ describe('ApiLoader', function () {
         request,
         options,
         apiPackage1Prefix,
-        loggerMock,
-        ensureAuthorizedMock;
+        loggerMock;
 
-    beforeEach(function () {
+    beforeEach(() => {
         packagePath = './test/fixtures/main-package';
         loggerMock = {
             error: jasmine.createSpy('error')
         };
-        ensureAuthorizedMock = jasmine.createSpy('ensureAuthorized').andCallFake(function () {
-            return function (req, res, next) {
-                next();
-            }
-        });
         options = {
             logger: loggerMock,
-            main: packagePath
+            main: packagePath,
+            ignore: []
         };
         apiPackage1Prefix = '/api-package-1-namespace';
 
         expressApp = express();
         router = Router();
 
-        ApiLoader = proxyquire('../../../../lib/api/loader', {
-            '../auth': {
-                EnsureAuthorized: ensureAuthorizedMock
-            }
-        });
+        ApiLoader = require('../../../../lib/api/loader');
         apiLoader = new ApiLoader(router, options);
         expressApp.use(router);
         request = supertest(expressApp);
     });
 
-    it('throws an exception when invalid arguments and/or options are provided', function () {
+    it('throws an exception when invalid arguments and/or options are provided', () => {
         expect(function () {
             new ApiLoader(router, {
                 main: [123]
@@ -87,8 +75,8 @@ describe('ApiLoader', function () {
 
     describe('when loading routes', function () {
 
-        it('assigns all the valid package routes to the given router and runs the configuration functions ' +
-            'exposed by package API modules', function (done) {
+        it(`assigns all the valid package routes to the given router and runs the configuration functions
+            exposed by package API modules`, function (done) {
             apiLoader.initialize();
             apiLoader.setAPIs();
 
@@ -99,12 +87,10 @@ describe('ApiLoader', function () {
                 request.post('/api-package-2/list/mylist/items').expect(200),
                 request.get('/api-package-2/list/mylist/items/123').expect(200),
                 request.put('/api-package-2/list/mylist/items/123').expect(400),
-                request.delete('/api-package-2/list/mylist/items/123').expect(200),
+                request.delete('/api-package-2/list/mylist/items/123').expect(200)
             ]);
 
-            expect(promise).toHaveBeenResolvedWith(done, function () {
-                expect(ensureAuthorizedMock).toHaveBeenCalled();
-            });
+            promise.then(done).catch(done.fail);
         });
 
         it('calls the `config` functions specified by LabShare packages', done => {
@@ -115,21 +101,22 @@ describe('ApiLoader', function () {
             });
 
             // A route set up by the 'config' package API
-            expect(request.get('/custom/api/route').expect(200)).toHaveBeenResolvedWith(done, () => {
-                expect(ensureAuthorizedMock).toHaveBeenCalled();
-            });
+            request.get('/custom/api/route').expect(200).then(done).catch(done.fail);
         });
 
         it('logs errors for invalid routes or duplicates', function () {
+            options.ignore = [];
+            apiLoader = new ApiLoader(router, options);
+
             apiLoader.initialize();
             apiLoader.setAPIs();
 
-            var errors = allArgs(options.logger.error).join(' ');
+            let errors = allArgs(options.logger.error).join(' ');
 
-            expect(errors).toContain('Error: Invalid HTTP method specified for route /list/:listName/items/:id from package api-package-2');
-            expect(errors).toContain('Error: Invalid route "{"httpMethod":"POST","middleware":[null]}" from package "api-package-2": path is required');
-            expect(errors).toContain('Error: Invalid route "{"path":"/list/:listName/items/:id","httpMethod":"DELETE"}" from package "api-package-2": middleware is required');
-            expect(errors).toContain('Error: Invalid route "{"path":"/documents","middleware":[null]}" from package "api-package-2": httpMethod is required');
+            expect(errors).toContain('Error: Invalid HTTP method specified for route /invalid-api-package/list/:listName/items/:id from package invalid-api-package');
+            expect(errors).toContain('Error: Invalid route "{"httpMethod":"POST","middleware":[null]}" from package "invalid-api-package": path is required');
+            expect(errors).toContain('Error: Invalid route "{"path":"/list/:listName/items/:id","httpMethod":"DELETE"}" from package "invalid-api-package": middleware is required');
+            expect(errors).toContain('Error: Invalid route "{"path":"/documents","middleware":[null]}" from package "invalid-api-package": httpMethod is required');
         });
 
         it('throws exceptions for invalid routes if a logger is not provided', function () {
@@ -158,10 +145,9 @@ describe('ApiLoader', function () {
             apiLoader.initialize();
             apiLoader.setAPIs();
 
-            expect(Q.all([
-                request.post('/api-package-1-namespace/open').expect(200),
-                request.post('/api-package-1-namespace/list/mylist/items').expect(404)
-            ])).toHaveBeenResolved(done);
+            request.post(`${apiPackage1Prefix}/open`).expect(200)
+                .then(done)
+                .catch(done.fail);
         });
 
         it('does not store duplicate routers in the router', function () {
