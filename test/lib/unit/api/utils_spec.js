@@ -37,7 +37,7 @@ describe('PackageUtils', function () {
 
         it('finds the name of a package from its manifest', function () {
             expect(packageUtils.getPackageName(null)).toBeNull();
-            expect(packageUtils.getPackageName(undefined)).toBeNull();
+            expect(packageUtils.getPackageName()).toBeNull();
             expect(packageUtils.getPackageName({})).toBeNull();
 
             expect(packageUtils.getPackageName({
