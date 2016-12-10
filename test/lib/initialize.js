@@ -1,16 +1,17 @@
-var supertest = require('supertest-as-promised'),
-    socketIOClient = require('socket.io-client');
+'use strict';
 
-/*global beforeEach, jasmine, expect, afterEach, describe, spyOn, it*/
+const supertest = require('supertest-as-promised'),
+    _ = require('lodash'),
+    socketIOClient = require('socket.io-client');
 
 module.exports = function initialize(jasmine, callback) {
     jasmine.getEnv().defaultTimeoutInterval = '45000';  // 45 seconds
-    var apiURL = _.get(global.LabShare, 'Config.services.Listen.Url', 'http://127.0.0.1') + ':' + _.get(global.LabShare, 'Config.services.Listen.Port', '8000');
+    let apiURL = _.get(global.LabShare, 'Config.services.Listen.Url', 'http://127.0.0.1') + ':' + _.get(global.LabShare, 'Config.services.Listen.Port', '8000');
 
-    var data = {
+    let data = {
         request: supertest(apiURL),
         Socket: socketIOClient,
-        apiURL: apiURL
+        apiURL
     };
 
     callback(null, data);
