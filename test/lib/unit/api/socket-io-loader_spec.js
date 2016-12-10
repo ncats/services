@@ -5,9 +5,7 @@ const path = require('path'),
     express = require('express'),
     {EventEmitter} = require('events');
 
-require('promise-matchers');
-
-describe('SocketIOLoader', function () {
+describe('SocketIOLoader', () => {
 
     let SocketIOLoader,
         socketLoader,
@@ -19,10 +17,10 @@ describe('SocketIOLoader', function () {
         socketInstanceStub,
         socketClientStub;
 
-    beforeEach(function () {
+    beforeEach(() => {
         packagePath = './test/fixtures/main-package';
         socketInstanceStub = new EventEmitter();
-        socketInstanceStub.of = jasmine.createSpy('of').andCallFake(function () {
+        socketInstanceStub.of = jasmine.createSpy('of').and.callFake(function () {
             return this;
         });
         socketInstanceStub.sockets = {
@@ -57,35 +55,36 @@ describe('SocketIOLoader', function () {
         socketLoader = new SocketIOLoader(options);
     });
 
-    it('throws an exception when invalid arguments and/or options are provided', function () {
+    it('throws an exception when invalid arguments and/or options are provided', () => {
         expect(function () {
             new SocketIOLoader({
                 main: [123]
             });
-        }).toThrow();
+        }).toThrowError('SocketIOLoader: `options.main` must be a string');
         expect(function () {
             new SocketIOLoader({
                 directories: ['a/directory', 5]
             });
-        }).toThrow();
+        }).toThrowError('SocketIOLoader: `options.directories` must contain non-empty strings');
     });
 
-    it('does not throw if options are not provided', function () {
+    it('does not throw if options are not provided', () => {
         expect(function () {
             new SocketIOLoader();
         }).not.toThrow();
     });
 
-    describe('when assigning socket IO events', function () {
+    describe('when assigning socket IO events', () => {
 
         beforeEach(function () {
-            spyOn(socketInstanceStub, 'on').andCallThrough();
+            spyOn(socketInstanceStub, 'on').and.callThrough();
         });
 
-        it('establishes socket connections for all packages', function (done) {
-            socketInstanceStub.on('custom-package-event', function (data) {
-                expect(data).toBe('Hello from socket-api-package1!');
-                done();
+        it('establishes socket connections for all packages', () => {
+            let customMessage = '';
+
+            socketInstanceStub.on('custom-package-event', data => {
+                customMessage = data;
             });
             
             socketLoader.connect(expressApp);
@@ -95,14 +94,15 @@ describe('SocketIOLoader', function () {
             socketInstanceStub.emit('connection', socketInstanceStub);
 
             expect(socketInstanceStub.of).toHaveBeenCalledWith(apiPackage1Prefix);
+            expect(customMessage).toBe('Hello from socket-api-package1!');
         });
         
-        it('establishes client connections too', function (done) {
+        it('establishes client connections too', done => {
             options.connections = [
                 'http://my.api.host'
             ];
 
-            socketClientStub.on('finished-processing', function (data) {
+            socketClientStub.on('finished-processing', data => {
                 expect(data).toBe('finished processing data!');
                 done(); 
             });

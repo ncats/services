@@ -1,31 +1,17 @@
 'use strict';
 
 const proxyquire = require('proxyquire'),
-    path = require('path'),
-    Q = require('q');
-
-require('promise-matchers');
+    path = require('path');
 
 describe('PackageUtils', function () {
 
-    var packageUtils,
+    let packageUtils,
         directory,
         fsMock;
 
     beforeEach(function () {
         directory = path.join('path', 'to', 'dir');
-        fsMock = {
-            readdirSync: jasmine.createSpy('readdirSync'),
-            readdir: jasmine.createSpy('readdir'),
-            lstatSync: jasmine.createSpy('lstatSync'),
-            lstat: jasmine.createSpy('lstat'),
-            unlinkSync: jasmine.createSpy('unlinkSync'),
-            realpathSync: jasmine.createSpy('realpathSync'),
-            realpath: jasmine.createSpy('realpath')
-        };
-        spyOn(Q, 'denodeify').andCallFake(function (func) {
-            return func;
-        });
+        fsMock = jasmine.createSpyObj('fs', ['readdirSync', 'lstatSync', 'unlinkSync', 'realpathSync', 'realpath']);
         packageUtils = proxyquire('../../../../lib/api/utils', {
             'fs': fsMock
         });
@@ -33,7 +19,7 @@ describe('PackageUtils', function () {
 
     describe('.isPackageSync()', function () {
 
-        var packagesPath;
+        let packagesPath;
 
         beforeEach(function () {
             packageUtils = require('../../../../lib/api/utils');
@@ -114,7 +100,7 @@ describe('PackageUtils', function () {
 
         it('throws if the manifest does not have a name', function () {
             var emptyManifest = {};
-            packageUtils.readJSON.andReturn(emptyManifest);
+            packageUtils.readJSON.and.returnValue(emptyManifest);
             expect(function () {
                 packageUtils.getPackageManifest(directory)
             }).toThrow();
@@ -124,7 +110,7 @@ describe('PackageUtils', function () {
             expect(packageUtils.getPackageManifest(directory)).toBeNull();
 
             var validManifest = {name: 'pack1'};
-            packageUtils.readJSON.andReturn(validManifest);
+            packageUtils.readJSON.and.returnValue(validManifest);
             expect(packageUtils.getPackageManifest(directory)).toBe(validManifest);
         });
 
