@@ -51,16 +51,12 @@ By default, the config function will be called with an object containing the fol
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| express | Object | The ExpressJS library |
 | apiLoader | Object | A ApiLoader instance. It contains methods for assigning APIs and running global API config functions. |
-| services | Object | A `Services` class instance. It contains methods related to loading and starting API services. |
 | app | Object | The Express router instance used by the `Services` class. |
 
-The instantiated `services` contains the following public properties:
+The instantiated `services` contains the following public methods:
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| isSiteActive | Function | Returns true after `services.expressStatic` is called. |
 | start | Function | Starts all the API routes and Socket connections. |
 | io | Function | Returns an instance of `Socket.IO` |
-| app | Object | The Express app instance |
