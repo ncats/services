@@ -4,6 +4,23 @@
 [![Build Status](https://travis-ci.com/LabShare/services.svg?token=Y1xBXqo2AsyTGxuGHcYM&branch=master)](https://travis-ci.com/LabShare/services)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/3b8ace2fa2784cf29a19a3f2dfd3cc60)](https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=LabShare/services&utm_campaign=Badge_Coverage)
 
+## Usage
+
+```js
+const {Services} = require('services');
+
+let options = {};
+
+let services = new Services(options);
+
+services.config(({app, services}) => {
+   // Optionally perform additional customization of the Express app initialized by Services and the loaded routes
+});
+
+// Start up the server with all the loaded HTTP and Socket APIs
+services.start();
+```
+
 ## Working with LabShare APIs
 ### [Running APIs](docs/run-package.md)
 ### [Adding HTTP APIs](docs/http-apis.md)
