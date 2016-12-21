@@ -8,10 +8,6 @@
       "Connections": []
     },
     "ServicePath": "",
-    "Auth": {
-      "Url": "https://a.labshare.org",
-      "ServicePath": "/_api"
-    },
     "Secret": "",
     "HTTPS": {
       "PrivateKey": "",
