@@ -9,7 +9,9 @@
 ```js
 const {Services} = require('services');
 
-let options = {};
+let options = {
+    // Override default options
+};
 
 let services = new Services(options);
 
@@ -21,10 +23,14 @@ services.config(({app, services}) => {
 services.start();
 ```
 
+## Configuration
+
+### [Configuring LabShare Services](docs/configuration.md)
+
 ## Working with LabShare APIs
 ### [Running APIs](docs/run-package.md)
-### [Adding HTTP APIs](docs/http-apis.md)
-### [Adding Socket APIs](docs/socket-apis.md)
+### [Creating HTTP APIs](docs/http-apis.md)
+### [Creating Socket APIs](docs/socket-apis.md)
 ### [Managing APIs with PM2](docs/pm2-services.md)
 
 ## Development
