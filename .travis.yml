@@ -3,7 +3,8 @@ node_js:
   - "6"
 before_install:
   - git config --global url."git@github.com:".insteadOf "https://github.com/"
-  - npm install -g lsc
+  - npm install -g lsc nsp
 script:
+  - nsp check
   - npm test
   - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then npm install -g codacy-coverage istanbul && npm run coverage && cat ./coverage/lcov.info | codacy-coverage && rm -rf ./coverage; fi
