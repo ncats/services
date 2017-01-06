@@ -8,10 +8,29 @@
       "Connections": []
     },
     "ServicePath": "",
-    "Secret": "",
     "HTTPS": {
       "PrivateKey": "",
       "Certificate": ""
+    },
+    "security": {
+      "sessionOptions": {
+        "secret": "",
+        "cookie": {
+          "httpOnly": true,
+          "maxAge": 3600000,
+          "secure": false
+        }
+      },
+      "corsOptions": {
+        "origin": "*",
+        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+        "preflightContinue": false
+      },
+      "contentSecurityPolicy": false,
+      "hpkp": false,
+      "referrerPolicy": {
+        "policy": "no-referrer"
+      }
     }
   }
 }
