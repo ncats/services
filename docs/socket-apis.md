@@ -14,7 +14,7 @@ Example:
 exports.onConnect = function (socket) {
     socket.emit('connected', 'Hi there!');
     socket.on('some-awesome-event', function (excitingData) {
-        // do something
+        // do something with "excitingData"
     });
     // ...
 }

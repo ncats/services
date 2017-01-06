@@ -53,10 +53,3 @@ By default, the config function will be called with an object containing the fol
 | ---- | ---- | ----------- |
 | apiLoader | Object | A ApiLoader instance. It contains methods for assigning APIs and running global API config functions. |
 | app | Object | The Express router instance used by the `Services` class. |
-
-The instantiated `services` contains the following public methods:
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| start | Function | Starts all the API routes and Socket connections. |
-| io | Function | Returns an instance of `Socket.IO` |
