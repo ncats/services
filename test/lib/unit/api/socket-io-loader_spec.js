@@ -1,58 +1,48 @@
 'use strict';
 
 const path = require('path'),
-    proxyquire = require('proxyquire'),
-    express = require('express'),
-    {EventEmitter} = require('events');
+    http = require('http'),
+    _ = require('lodash'),
+    portfinder = require('portfinder'),
+    clientio = require('socket.io-client');
 
 describe('SocketIOLoader', () => {
 
     let SocketIOLoader,
         socketLoader,
-        expressApp,
+        port,
         packagePath,
         options,
-        apiPackage1Prefix,
-        apiPackage2Prefix,
-        socketInstanceStub,
-        socketClientStub;
+        server,
+        apiPackage1Prefix;
 
-    beforeEach(() => {
+    beforeEach(done => {
         packagePath = './test/fixtures/main-package';
-        socketInstanceStub = new EventEmitter();
-        socketInstanceStub.of = jasmine.createSpy('of').and.callFake(function () {
-            return this;
-        });
-        socketInstanceStub.sockets = {
-            setMaxListeners() {
-                return this;
-            }
-        };
-        socketClientStub = new EventEmitter();
-
-        socketInstanceStub.setMaxListeners(50);
-        socketClientStub.setMaxListeners(50);
 
         options = {
             main: packagePath,
             directories: [path.join(packagePath, 'node_modules', 'socket-api-package1')]
         };
         apiPackage1Prefix = '/socket-api-package-1-namespace';
-        apiPackage2Prefix = '/socket-api-package-1';
 
-        expressApp = express();
-
-        SocketIOLoader = proxyquire('../../../../lib/api/socket-io-loader', {
-            'socket.io': function () {
-                return socketInstanceStub;
-            },
-            'socket.io-client': {
-                connect: function () {
-                    return socketClientStub;
-                }
-            }
-        });
+        SocketIOLoader = require('../../../../lib/api/socket-io-loader');
         socketLoader = new SocketIOLoader(options);
+
+        portfinder.getPort((err, unusedPort) => {
+            if (err) {
+                done.fail(err);
+                return;
+            }
+
+            port = unusedPort;
+
+            server = http.createServer().listen(unusedPort);
+            done();
+        });
+    });
+
+    afterEach(done => {
+        server.close(done);
     });
 
     it('throws an exception when invalid arguments and/or options are provided', () => {
@@ -76,41 +66,80 @@ describe('SocketIOLoader', () => {
 
     describe('when assigning socket IO events', () => {
 
-        beforeEach(function () {
-            spyOn(socketInstanceStub, 'on').and.callThrough();
+        let port1,
+            port2,
+            server1,
+            server2;
+
+        beforeEach(done => {
+            portfinder.getPort((err, unusedPort) => {
+                if (err) {
+                    done.fail(err);
+                    return;
+                }
+
+                port1 = unusedPort;
+                server1 = http.createServer().listen(unusedPort);
+
+                portfinder.getPort((err, unusedPort) => {
+                    if (err) {
+                        done.fail(err);
+                        return;
+                    }
+
+                    port2 = unusedPort;
+                    server2 = http.createServer().listen(unusedPort);
+
+                    done();
+                });
+            });
         });
 
-        it('establishes socket connections for all packages', () => {
-            let customMessage = '';
-
-            socketInstanceStub.on('custom-package-event', data => {
-                customMessage = data;
+        afterEach(done => {
+            server1.close(() => {
+                server2.close(done);
             });
-            
-            socketLoader.connect(expressApp);
-
-            // Fake the initial and subsequent 'socket.io' connection events
-            socketInstanceStub.emit('connection', socketInstanceStub);
-            socketInstanceStub.emit('connection', socketInstanceStub);
-
-            expect(socketInstanceStub.of).toHaveBeenCalledWith(apiPackage1Prefix);
-            expect(customMessage).toBe('Hello from socket-api-package1!');
         });
-        
-        it('establishes client connections too', done => {
-            options.connections = [
-                'http://my.api.host'
-            ];
 
-            socketClientStub.on('finished-processing', data => {
-                expect(data).toBe('finished processing data!');
-                done(); 
+        it('establishes socket connections for all packages', done => {
+            socketLoader.connect(server);
+
+            let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
+
+            clientSocket.once('connect', (data) => {
+                clientSocket.emit('process-something', 'Data', (error, data) => {
+                    expect(data).toBe('data');
+
+                    clientSocket.disconnect();
+                    done();
+                });
             });
-            
-            socketLoader = new SocketIOLoader(options);
-            socketLoader.connect(expressApp);
+        });
 
-            socketClientStub.emit('process-something', 'Data');
+        it('establishes P2P client connections too', done => {
+            let socketLoader1 = new SocketIOLoader({
+                main: packagePath
+            });
+
+            socketLoader1.connect(server1);
+
+            let socketLoader2 = new SocketIOLoader({
+                main: packagePath,
+                connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
+            });
+
+            socketLoader2.connect(server2);
+
+            socketLoader2.on('status', message => {
+                if (_.includes(message, 'connected to')) {
+                    expect(message).toContain(`connected to: http://localhost:${port1}`);
+
+                    socketLoader1.disconnect();
+                    socketLoader2.disconnect();
+
+                    done();
+                }
+            });
         });
 
     });
