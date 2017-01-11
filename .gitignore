@@ -21,6 +21,9 @@ packages
 # Local Config
 config.json
 
+# Services Config
+services.json
+
 # Runtime data
 pids
 *.pid
