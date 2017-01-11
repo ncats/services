@@ -1,6 +1,9 @@
 'use strict';
 
 const supertest = require('supertest-as-promised'),
+    http = require('http'),
+    clientio = require('socket.io-client'),
+    portfinder = require('portfinder'),
     _ = require('lodash');
 
 describe('Services', () => {
@@ -8,25 +11,49 @@ describe('Services', () => {
     let packagesPath,
         Services,
         services,
+        port,
         loggerMock,
+        server,
+        apiPackage1Prefix,
         options;
 
-    beforeEach(() => {
+    beforeEach(done => {
         packagesPath = './test/fixtures/main-package';
+        apiPackage1Prefix = '/socket-api-package-1-namespace';
         loggerMock = jasmine.createSpyObj('logger', ['error', 'info', 'warn']);
-        options = {
-            logger: loggerMock,
-            loaderOptions: {
-                main: packagesPath,
-                logger: loggerMock
-            },
-            morgan: {
-                enable: false
-            }
-        };
 
-        Services = require('../../../../lib/services');
-        services = new Services(options);
+        portfinder.getPort((error, unusedPort) => {
+            if (error) {
+                done.fail(error);
+                return;
+            }
+
+            port = unusedPort;
+
+            global.LabShare = {
+                Config: {
+                    services: {
+                        Listen: {
+                            Port: unusedPort
+                        }
+                    }
+                }
+            };
+
+            options = {
+                logger: loggerMock,
+                main: packagesPath,
+                morgan: {
+                    enable: false
+                },
+                connections: []
+            };
+
+            Services = require('../../../../lib/services');
+            services = new Services(options);
+
+            done();
+        });
     });
 
     afterEach(() => {
@@ -41,8 +68,10 @@ describe('Services', () => {
 
         expect(_.get(global, 'LabShare.IO')).toBeUndefined();
 
-        let server = services.start(),
-            request = supertest(server);
+        server = services.start();
+
+        let request = supertest(server),
+            clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
 
         expect(global.LabShare.IO).toBeDefined();
 
@@ -56,7 +85,15 @@ describe('Services', () => {
                 expect(data.headers['referrer-policy']).toBe('no-referrer');
                 expect(data.headers['x-xss-protection']).toBe('1; mode=block');
 
-                done();
+                // Test socket connections
+                clientSocket.once('connect', (data) => {
+                    clientSocket.emit('process-something', 'Data', (error, data) => {
+                        expect(data).toBe('data');
+
+                        clientSocket.disconnect();
+                        done();
+                    });
+                });
             })
             .catch(done.fail);
     });
@@ -64,7 +101,7 @@ describe('Services', () => {
     it('throws if configuration is applied after the server is started', () => {
         let services = new Services(options);
 
-        services.start();
+        server = services.start();
 
         expect(() => {
             services.config();
