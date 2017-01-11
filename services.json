@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "script": "lsc",
+      "name": "api1",
+      "interpreter": "none",
+      "watch": ["config.json"],
+      "args": "start services",
+      "cwd": "/home/ankit/Desktop/NIH/labshare/auth",
+      "force": true
+    }
+  ]
+}

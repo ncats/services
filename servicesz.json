@@ -1,0 +1,31 @@
+{
+  "apps": [
+    {
+      "script": "lsc",
+      "name": "api1",
+      "interpreter": "none",
+      "watch": ["config.json"],
+      "args": "services start",
+      "cwd": "/absolute/path/to/LabShare/package",
+      "force": true
+    },
+    {
+      "script": "lsc",
+      "name": "api2",
+      "interpreter": "none",
+      "watch": ["config.json"],
+      "args": "services start",
+      "cwd": "/absolute/path/to/LabShare/package",
+      "force": true
+    },
+    {
+      "script": "lsc",
+      "name": "api3",
+      "interpreter": "none",
+      "watch": ["config.json"],
+      "args": "services start",
+      "cwd": "/absolute/path/to/LabShare/package",
+      "force": true
+    }
+  ]
+}
