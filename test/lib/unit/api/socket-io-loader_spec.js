@@ -18,7 +18,6 @@ describe('SocketIOLoader', () => {
 
     beforeEach(done => {
         packagePath = './test/fixtures/main-package';
-
         options = {
             main: packagePath,
             directories: [path.join(packagePath, 'node_modules', 'socket-api-package1')]
@@ -26,7 +25,6 @@ describe('SocketIOLoader', () => {
         apiPackage1Prefix = '/socket-api-package-1-namespace';
 
         SocketIOLoader = require('../../../../lib/api/socket-io-loader');
-        socketLoader = new SocketIOLoader(options);
 
         portfinder.getPort((err, unusedPort) => {
             if (err) {
@@ -35,8 +33,9 @@ describe('SocketIOLoader', () => {
             }
 
             port = unusedPort;
-
             server = http.createServer().listen(unusedPort);
+            socketLoader = new SocketIOLoader(server, options);
+
             done();
         });
     });
@@ -47,12 +46,15 @@ describe('SocketIOLoader', () => {
 
     it('throws an exception when invalid arguments and/or options are provided', () => {
         expect(function () {
-            new SocketIOLoader({
+            new SocketIOLoader(null, {});
+        }).toThrowError('SocketIOLoader: `server` is required');
+        expect(function () {
+            new SocketIOLoader({}, {
                 main: [123]
             });
         }).toThrowError('SocketIOLoader: `options.main` must be a string');
         expect(function () {
-            new SocketIOLoader({
+            new SocketIOLoader({}, {
                 directories: ['a/directory', 5]
             });
         }).toThrowError('SocketIOLoader: `options.directories` must contain non-empty strings');
@@ -60,7 +62,7 @@ describe('SocketIOLoader', () => {
 
     it('does not throw if options are not provided', () => {
         expect(function () {
-            new SocketIOLoader();
+            new SocketIOLoader({});
         }).not.toThrow();
     });
 
@@ -102,7 +104,7 @@ describe('SocketIOLoader', () => {
         });
 
         it('establishes socket connections for all packages', done => {
-            socketLoader.connect(server);
+            socketLoader.connect();
 
             let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
 
@@ -117,18 +119,18 @@ describe('SocketIOLoader', () => {
         });
 
         it('establishes P2P client connections too', done => {
-            let socketLoader1 = new SocketIOLoader({
+            let socketLoader1 = new SocketIOLoader(server1, {
                 main: packagePath
             });
 
-            socketLoader1.connect(server1);
+            socketLoader1.connect();
 
-            let socketLoader2 = new SocketIOLoader({
+            let socketLoader2 = new SocketIOLoader(server2, {
                 main: packagePath,
                 connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
             });
 
-            socketLoader2.connect(server2);
+            socketLoader2.connect();
 
             socketLoader2.on('status', message => {
                 if (_.includes(message, 'connected to')) {
