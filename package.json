@@ -1,10 +1,9 @@
 {
-  "name": "services",
-  "namespace": "",
+  "name": "@ls/services",
+  "namespace": "services",
   "main": "./",
-  "version": "v0.16.0104",
+  "version": "v0.16.0119",
   "description": "LabShare API service manager",
-  "private": true,
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
     "type": "git",
