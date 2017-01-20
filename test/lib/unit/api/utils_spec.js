@@ -3,13 +3,13 @@
 const proxyquire = require('proxyquire'),
     path = require('path');
 
-describe('PackageUtils', function () {
+describe('PackageUtils', () => {
 
     let packageUtils,
         directory,
         fsMock;
 
-    beforeEach(function () {
+    beforeEach(() => {
         directory = path.join('path', 'to', 'dir');
         fsMock = jasmine.createSpyObj('fs', ['readdirSync', 'lstatSync', 'unlinkSync', 'realpathSync', 'realpath']);
         packageUtils = proxyquire('../../../../lib/api/utils', {
@@ -17,25 +17,25 @@ describe('PackageUtils', function () {
         });
     });
 
-    describe('.isPackageSync()', function () {
+    describe('.isPackageSync()', () => {
 
         let packagesPath;
 
-        beforeEach(function () {
+        beforeEach(() => {
             packageUtils = require('../../../../lib/api/utils');
             packagesPath = './test/fixtures';
         });
 
-        it('checks if a directory contains a LabShare package', function () {
+        it('checks if a directory contains a LabShare package', () => {
             expect(packageUtils.isPackageSync(packagesPath)).toBeFalsy();
             expect(packageUtils.isPackageSync(path.join(packagesPath, 'main-package'))).toBeTruthy();
         });
 
     });
 
-    describe('.getPackageName', function () {
+    describe('.getPackageName', () => {
 
-        it('finds the name of a package from its manifest', function () {
+        it('finds the name of a package from its manifest', () => {
             expect(packageUtils.getPackageName(null)).toBeNull();
             expect(packageUtils.getPackageName()).toBeNull();
             expect(packageUtils.getPackageName({})).toBeNull();
@@ -51,74 +51,73 @@ describe('PackageUtils', function () {
 
     });
 
-    describe('.getPackageDependencies', function () {
+    describe('.getPackageDependencies', () => {
 
-        it('returns an object containing the package\'s LabShare package dependencies', function () {
-            var manifest = {
+        it('returns an object containing the package\'s LabShare package dependencies', () => {
+            let manifest = {
                 "name": "name",
                 "dependencies": {
                     "lodash": "*"
                 },
-                "packageDependencies": {
-                    "foo": "1.5.9"
-                }
+                "packageDependencies": [
+                    'foo'
+                ]
+
             };
-            expect(packageUtils.getPackageDependencies(manifest)).toEqual({
-                "foo": "1.5.9"
-            });
+            expect(packageUtils.getPackageDependencies(manifest)).toEqual(['foo']);
         });
 
-        it('returns an empty object if the package does not specify dependencies or the dependencies could not be read', function () {
-            var noPackageDeps = {
+        it('returns an empty object if the package does not specify dependencies or the dependencies could not be read', () => {
+            let noPackageDeps = {
                     "name": "name",
                     "dependencies": {
                         "lodash": "*"
                     }
                 },
                 invalidDepDefinition = {
-                    "packageDependencies": []
+                    "packageDependencies": 123
 
                 };
-            expect(packageUtils.getPackageDependencies(noPackageDeps)).toEqual({});
-            expect(packageUtils.getPackageDependencies(null)).toEqual({});
-            expect(packageUtils.getPackageDependencies(invalidDepDefinition)).toEqual({});
+            expect(packageUtils.getPackageDependencies(noPackageDeps)).toEqual([]);
+            expect(packageUtils.getPackageDependencies(null)).toEqual([]);
+            expect(packageUtils.getPackageDependencies(invalidDepDefinition)).toEqual([]);
         });
 
     });
 
-    describe('.getPackageManifest', function () {
+    describe('.getPackageManifest', () => {
 
-        beforeEach(function () {
+        beforeEach(() => {
             spyOn(packageUtils, 'readJSON');
         });
 
-        it('throws with invalid arguments', function () {
-            expect(function () {
+        it('throws with invalid arguments', () => {
+            expect(() => {
                 packageUtils.getPackageManifest(null);
             }).toThrow();
         });
 
-        it('throws if the manifest does not have a name', function () {
-            var emptyManifest = {};
+        it('throws if the manifest does not have a name', () => {
+            let emptyManifest = {};
             packageUtils.readJSON.and.returnValue(emptyManifest);
-            expect(function () {
+            expect(() => {
                 packageUtils.getPackageManifest(directory)
             }).toThrow();
         });
 
-        it('retrieves the directory\'s manifest', function () {
+        it('retrieves the directory\'s manifest', () => {
             expect(packageUtils.getPackageManifest(directory)).toBeNull();
 
-            var validManifest = {name: 'pack1'};
+            let validManifest = {name: 'pack1'};
             packageUtils.readJSON.and.returnValue(validManifest);
             expect(packageUtils.getPackageManifest(directory)).toBe(validManifest);
         });
 
     });
 
-    describe('.isIgnored', function () {
+    describe('.isIgnored', () => {
 
-        it('checks if a package is ignored by its name', function () {
+        it('checks if a package is ignored by its name', () => {
             expect(packageUtils.isIgnored({name: 'pack1'}, ['pack2', 'pack1'])).toBeTruthy();
             expect(packageUtils.isIgnored({name: 'pack1'}, ['pack2', 'pack2'])).toBeFalsy();
             expect(packageUtils.isIgnored({}, ['pack2', 'pack2'])).toBeFalsy();
