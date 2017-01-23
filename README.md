@@ -6,10 +6,10 @@
 
 ## Usage
 
-`npm i @ls/services`
+`npm i @labshare/services`
 
 ```js
-const {Services} = require('@ls/services');
+const {Services} = require('@labshare/services');
 
 let options = {
     // Override default options
