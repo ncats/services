@@ -109,11 +109,34 @@ describe('SocketIOLoader', () => {
             let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
 
             clientSocket.once('connect', (data) => {
-                clientSocket.emit('process-something', 'Data', (error, data) => {
-                    expect(data).toBe('data');
+                clientSocket.emit('process-something', 'Data', (error, result) => {
+                    expect(error).toBeNull();
+                    expect(result).toBe('data');
 
                     clientSocket.disconnect();
                     done();
+                });
+            });
+        });
+
+        it('applies optional middleware to sockets', done => {
+            socketLoader.connect();
+
+            let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
+
+            clientSocket.once('connect', (data) => {
+                clientSocket.emit('send-email', {address: 'legit@gmail.com'}, (error, result) => {
+                    expect(error).toBeNull();
+                    expect(result).toBe('Received!');
+
+                    clientSocket.emit('send-email', {address: 'spam@nefarious.com'}, (error, result) => {
+                        expect(error).not.toBeNull();
+                        expect(error.message).toBe('Blocked!');
+                        expect(result).toBeUndefined();
+
+                        clientSocket.disconnect();
+                        done();
+                    });
                 });
             });
         });
@@ -141,6 +164,29 @@ describe('SocketIOLoader', () => {
 
                     done();
                 }
+            });
+        });
+
+        it('can limit access to specific domains', done => {
+            let socketLoader1 = new SocketIOLoader(server1, {
+                main: packagePath,
+                ioOptions: {
+                    origins: 'http://some.madeup.domain:80'
+                }
+            });
+
+            socketLoader1.connect();
+
+            let socketLoader2 = new SocketIOLoader(server2, {
+                main: packagePath,
+                connections: [`http://localhost:${port1}${apiPackage1Prefix}`],
+            });
+
+            socketLoader2.connect();
+
+            socketLoader2.on('error', message => {
+                expect(message).toContain(`failed to connect to: http://localhost:${port1}${apiPackage1Prefix}`);
+                done();
             });
         });
 
