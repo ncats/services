@@ -1,23 +1,38 @@
-## Socket.io APIs
+## Socket APIs
 
 ### How to add new Socket.io connections
 
-Create Node modules inside the 'api' directory of your package that export a
-'onConnect' function. The 'onConnect' function will receive a socket at start
-up as the first argument. You can assign event listeners and handlers to the
-socket as needed.
+To define socket APIs, create CommonJS modules inside the `api` directory of
+your project that export a `sockets` property.  The `sockets` value is an array of socket connection handler objects each
+containing the following properties:
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| event | String | The name of the LabShare package's socket event. |
+| onEvent | Function | The main event handler for the specified event. It receives `socket`, `message`, and `callback` as arguments. |
+| [middleware] | Array or Function | One or more connect-style middleware functions. Each middleware receives an object containing `{socket, socketHandler, message}`, and a callback function. Optional. |
 
 Example:
 
 ```javascript
-// ls-hello/api/hellosocket.js
-exports.onConnect = function (socket) {
-    socket.emit('connected', 'Hi there!');
-    socket.on('some-awesome-event', function (excitingData) {
-        // do something with "excitingData"
-    });
-    // ...
-}
+// ls-email/api/email.js
+exports.sockets [
+    {
+        event: 'send-email',
+        onEvent: (socket, message, callback) => {
+            callback(null, 'Received!');
+        },
+        middleware: [
+            ({socket, socketHandler, message}, next) => {
+                if (~message.address.indexOf('spam')) {
+                    next({message: 'Blocked!'});
+                    return;
+                }
+                next();
+            }
+        ]
+    }
+];
 ```
 
 ### Configuring services for P2P socket communication
@@ -44,5 +59,4 @@ Example:
 
 With the above configuration, `services` will attempt to establish a socket
 connection to `host1` and `host2`. Broadcasting an event
-from your LabShare package would invoke the listeners set up in the `onConnect`
-functions of `host1` and `host2`.
+from your LabShare package would invoke the listeners set up in the socket handlers for `host1` and `host2`.

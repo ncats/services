@@ -1,8 +1,8 @@
 {
-  "name": "@ls/services",
+  "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "v0.16.0119",
+  "version": "v0.16.0123",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
@@ -18,8 +18,8 @@
     "url": "https://github.com/LabShare/services/issues"
   },
   "license": "MIT",
-  "packageDependencies": {},
   "dependencies": {
+    "async": "^2.1.4",
     "body-parser": "^1.15.1",
     "cookie-parser": "^1.4.3",
     "cors": "^2.7.1",
