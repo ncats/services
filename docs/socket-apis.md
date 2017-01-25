@@ -10,7 +10,15 @@ containing the following properties:
 | ---- | ---- | ----------- |
 | event | String | The name of the LabShare package's socket event. |
 | onEvent | Function | The main event handler for the specified event. It receives `socket`, `message`, and `callback` as arguments. |
-| [middleware] | Array or Function | One or more connect-style middleware functions. Each middleware receives an object containing `{socket, socketHandler, message}`, and a callback function. Optional. |
+| [middleware] | Array or Function | One or more connect-style middleware functions. Each middleware receives an object containing `{socket, socketHandler, io, message}`, and a callback function. Optional. |
+
+Objects received by Socket middleware:
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| socket | Object | The connected Socket.IO socket instance. |
+| socketHandler | Object | The socket definition storing the middleware. |
+| io | Object | The root Socket.IO instance. |
+| message | Object | The message sent to the `onEvent` handler. Optional |
 
 Example:
 
