@@ -124,7 +124,9 @@ describe('SocketIOLoader', () => {
 
             let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
 
-            clientSocket.once('connect', (data) => {
+            clientSocket.emit('send-email', error => {
+                expect(error.message).toBe('No email provided!');
+
                 clientSocket.emit('send-email', {address: 'legit@gmail.com'}, (error, result) => {
                     expect(error).toBeNull();
                     expect(result).toBe('Received!');
