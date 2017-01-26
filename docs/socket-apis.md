@@ -13,6 +13,7 @@ containing the following properties:
 | [middleware] | Array or Function | One or more connect-style middleware functions. Each middleware receives an object containing `{socket, socketHandler, io, message}`, and a callback function. Optional. |
 
 Objects received by Socket middleware and onEvent functions:
+
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | socket | Object | The connected Socket.IO socket instance. |
