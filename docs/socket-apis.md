@@ -9,8 +9,17 @@ containing the following properties:
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | event | String | The name of the LabShare package's socket event. |
-| onEvent | Function | The main event handler for the specified event. It receives `socket`, `message`, and `callback` as arguments. |
-| [middleware] | Array or Function | One or more connect-style middleware functions. Each middleware receives an object containing `{socket, socketHandler, message}`, and a callback function. Optional. |
+| onEvent | Function | The main event handler for the specified event. It receives `{socket, socketHandler, io, message}`, and a callback function. |
+| [middleware] | Array or Function | One or more connect-style middleware functions. Each middleware receives an object containing `{socket, socketHandler, io, message}`, and a callback function. Optional. |
+
+Objects received by Socket middleware and onEvent functions:
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| socket | Object | The connected Socket.IO socket instance. |
+| socketHandler | Object | The socket definition storing the middleware. |
+| io | Object | The root Socket.IO instance. |
+| message | Object | The message sent to the `onEvent` handler. Optional. |
 
 Example:
 
@@ -19,7 +28,7 @@ Example:
 exports.sockets [
     {
         event: 'send-email',
-        onEvent: (socket, message, callback) => {
+        onEvent: ({socket, message}, callback) => {
             callback(null, 'Received!');
         },
         middleware: [
