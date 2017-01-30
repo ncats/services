@@ -11,16 +11,8 @@
       "Certificate": ""
     },
     "loadServices" : true,
-    "pattern" :  "",
-    "main" :  "",
     "directories" : [],
-    "morgan" : {
-      "enable": "",
-      "format": "",
-      "options": {
-        "stream": ""
-      }
-    },
+    "morgan" : {},
     "security": {
       "sessionOptions": {
         "secret": "",
