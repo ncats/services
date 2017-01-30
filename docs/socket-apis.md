@@ -48,7 +48,7 @@ exports.sockets [
 
 The `Services` package has a configuration value for establishing socket
 communication between other LabShare packages using `Services`. In other words, `Services` can act as both a server and a client using sockets. Add the host names and the Socket.IO
-package namespaces to the list of socket connections in `Socket.Connections`:
+package namespaces to the list of socket connections in `connections`:
 
 Example:
 
@@ -56,12 +56,12 @@ Example:
 // config.json
 {
  "services": {
-    "Socket": {
-        "Connections": [
+     "socket" : {
+        "connections": [
             "http://host1.org/namespace1",
             "http://host2.org/namespace2"
         ]
-    }
+     }
  }
 }
 ```
