@@ -152,7 +152,10 @@ describe('SocketIOLoader', () => {
 
             let socketLoader2 = new SocketIOLoader(server2, {
                 main: packagePath,
-                connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
+                socket:{
+                    connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
+                }
+
             });
 
             socketLoader2.connect();
@@ -181,7 +184,10 @@ describe('SocketIOLoader', () => {
 
             let socketLoader2 = new SocketIOLoader(server2, {
                 main: packagePath,
-                connections: [`http://localhost:${port1}${apiPackage1Prefix}`],
+                socket: {
+                    connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
+                }
+
             });
 
             socketLoader2.connect();
