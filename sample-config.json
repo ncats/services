@@ -13,20 +13,8 @@
       "Certificate": ""
     },
     "loadServices": true,
-    "directories": [],
-    "morgan": {},
     "security": {
-      "sessionOptions": {
-        "secret": "",
-        "resave": "",
-        "saveUnintialized": "",
-        "name": "",
-        "cookie": {
-          "httpOnly": true,
-          "maxAge": 3600000,
-          "secure": false
-        }
-      },
+      "sessionOptions": {},
       "corsOptions": {
         "origin": "*",
         "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
