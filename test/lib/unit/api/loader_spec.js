@@ -99,8 +99,7 @@ describe('ApiLoader', () => {
             apiLoader.setAPIs();
             var promise = Q.all([
                 request.get('/api-package-1-namespace/endpoints').expect(200),
-                request.post('/api-package-1-namespace/endpoints').expect(200),
-                request.get('/api-package-1-namespace/version').expect(200)
+                request.post('/api-package-1-namespace/endpoints').expect(200)
             ]);
             promise.then(done).catch(done.fail);
         });
