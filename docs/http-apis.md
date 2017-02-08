@@ -34,13 +34,12 @@ exported function returns an object containing a `Routes` or `routes` property.
 ### Advanced API configuration [Optional]
 
 If your LabShare package needs access to the underlying Express instance for
-additional customization, export a 'Config' functions from your API modules.
+additional customization, export a `config` function from your API modules.
 
 Example:
 ```javascript
 // ls-hello/api/helloworld.js
-var helloworld = module.exports;
-helloService.Config = function (data) {
+exports.config = function (data) {
     // - add middleware to the expressApp
     // - add global routes
     // - etc.
