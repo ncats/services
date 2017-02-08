@@ -85,13 +85,23 @@ describe('ApiLoader', () => {
                 request.post('/api-package-1-namespace/123/_api/settings').expect(200),
                 request.post('/api-package-1-namespace/open').expect(200),
                 request.post('/api-package-2/list/mylist/items').expect(200),
-                request.get('/api-package-1-namespace/endpoints').expect(200),
-                request.post('/api-package-1-namespace/endpoints').expect(200),
                 request.get('/api-package-2/list/mylist/items/123').expect(200),
                 request.put('/api-package-2/list/mylist/items/123').expect(400),
                 request.delete('/api-package-2/list/mylist/items/123').expect(200)
             ]);
 
+            promise.then(done).catch(done.fail);
+        });
+
+
+        it(`will test if the end points assigned by api/api-config.json are working fine`, function (done) {
+            apiLoader.initialize();
+            apiLoader.setAPIs();
+            var promise = Q.all([
+                request.get('/api-package-1-namespace/endpoints').expect(200),
+                request.post('/api-package-1-namespace/endpoints').expect(200),
+                request.get('/api-package-1-namespace/version').expect(200)
+            ]);
             promise.then(done).catch(done.fail);
         });
 
