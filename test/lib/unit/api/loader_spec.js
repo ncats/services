@@ -3,7 +3,7 @@
 const path = require('path'),
     supertest = require('supertest-as-promised'),
     express = require('express'),
-    {Router} = express,
+    { Router } = express,
     Q = require('q'),
     _ = require('lodash');
 
@@ -45,44 +45,45 @@ describe('ApiLoader', () => {
     });
 
     it('throws an exception when invalid arguments and/or options are provided', () => {
-        expect(function () {
+        expect(function() {
             new ApiLoader(router, {
                 main: [123]
             });
         }).toThrow();
-        expect(function () {
+        expect(function() {
             new ApiLoader({})
         }).toThrow();
-        expect(function () {
+        expect(function() {
             new ApiLoader(router, {
                 logger: {
                     error: null
                 }
             });
         }).toThrow();
-        expect(function () {
+        expect(function() {
             new ApiLoader(router, {
                 directories: ['a/directory', 5]
             });
         }).toThrow();
     });
 
-    it('does not throw if options are not provided', function () {
-        expect(function () {
+    it('does not throw if options are not provided', function() {
+        expect(function() {
             new ApiLoader(router);
         }).not.toThrow();
     });
 
-    describe('when loading routes', function () {
+    describe('when loading routes', function() {
 
         it(`assigns all the valid package routes to the given router and runs the configuration functions
-            exposed by package API modules`, function (done) {
+            exposed by package API modules`, function(done) {
             apiLoader.initialize();
             apiLoader.setAPIs();
 
             var promise = Q.all([
                 request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!'),
                 request.post('/api-package-1-namespace/123/_api/settings').expect(200),
+                request.get('/api-package-1-namespace/version').expect(200),
                 request.post('/api-package-1-namespace/open').expect(200),
                 request.post('/api-package-2/list/mylist/items').expect(200),
                 request.get('/api-package-2/list/mylist/items/123').expect(200),
@@ -104,7 +105,7 @@ describe('ApiLoader', () => {
             request.get('/custom/api/route').expect(200).then(done).catch(done.fail);
         });
 
-        it('logs errors for invalid routes or duplicates', function () {
+        it('logs errors for invalid routes or duplicates', function() {
             options.ignore = [];
             apiLoader = new ApiLoader(router, options);
 
@@ -119,16 +120,16 @@ describe('ApiLoader', () => {
             expect(errors).toContain('Error: Invalid route "{"path":"/documents","middleware":[null]}" from package "invalid-api-package": httpMethod is required');
         });
 
-        it('throws exceptions for invalid routes if a logger is not provided', function () {
+        it('throws exceptions for invalid routes if a logger is not provided', function() {
             options.logger = null;
             apiLoader = new ApiLoader(router, options);
 
-            expect(function () {
+            expect(function() {
                 apiLoader.initialize();
             }).toThrow();
         });
 
-        it('can ignore packages by name', function (done) {
+        it('can ignore packages by name', function(done) {
             options.ignore = ['api-package-1'];
 
             apiLoader = new ApiLoader(router, options);
@@ -138,7 +139,7 @@ describe('ApiLoader', () => {
             request.post(apiPackage1Prefix + '/open').expect(404, done);
         });
 
-        it('can load package APIs from directories specified by options.directories', function (done) {
+        it('can load package APIs from directories specified by options.directories', function(done) {
             apiLoader = new ApiLoader(router, {
                 directories: [path.join(packagePath, 'node_modules', 'api-package1')]
             });
@@ -150,7 +151,7 @@ describe('ApiLoader', () => {
                 .catch(done.fail);
         });
 
-        it('does not store duplicate routers in the router', function () {
+        it('does not store duplicate routers in the router', function() {
             var apiPackage1Path = path.join(packagePath, 'node_modules', 'api-package1');
             apiLoader = new ApiLoader(router, {
                 directories: [apiPackage1Path, apiPackage1Path, apiPackage1Path]
