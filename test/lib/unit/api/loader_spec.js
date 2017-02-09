@@ -21,7 +21,7 @@ describe('ApiLoader', () => {
         request,
         options,
         apiPackage1Prefix,
-        loggerMock;
+        loggerMock, apiConfig;
 
     beforeEach(() => {
         packagePath = './test/fixtures/main-package';
@@ -39,6 +39,7 @@ describe('ApiLoader', () => {
         router = Router();
 
         ApiLoader = require('../../../../lib/api/loader');
+        apiConfig = require('../../../../api/api-config');
         apiLoader = new ApiLoader(router, options);
         expressApp.use(router);
         request = supertest(expressApp);
@@ -77,8 +78,9 @@ describe('ApiLoader', () => {
 
         it(`assigns all the valid package routes to the given router and runs the configuration functions
             exposed by package API modules`, function (done) {
+           
             apiLoader.initialize();
-            apiLoader.setAPIs();
+            apiLoader.setAPIs();           
 
             var promise = Q.all([
                 request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!'),
@@ -95,12 +97,21 @@ describe('ApiLoader', () => {
 
 
         it(`will test if the end points assigned by api/api-config.json are working fine`, function (done) {
-            apiLoader.initialize();
-            apiLoader.setAPIs();
+
+             apiLoader.initialize();
+                  apiConfig.config({
+                apiLoader: apiLoader,
+                app: router
+            });
+            apiLoader.setAPIs(); 
+
             var promise = Q.all([
                 request.get('/api-package-1-namespace/endpoints').expect(200),
-                request.post('/api-package-1-namespace/endpoints').expect(200)
+                request.post('/api-package-1-namespace/endpoints').expect(200),
+                request.get('/api-package-1-namespace/version').expect(200),
+                request.post('/api-package-1-namespace/version').expect(404)
             ]);
+
             promise.then(done).catch(done.fail);
         });
 

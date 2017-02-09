@@ -9,8 +9,6 @@ exports.config = function(data) {
         }
     }
 
-
-
     /**
      * @param packageDirectory A LabShare package directory
      * @description Parses package.json to retrieve relevent fields and exposes them on package.json
