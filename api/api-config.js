@@ -10,7 +10,8 @@ exports.config = function(data) {
     }
 
     /**
-     * @param packageDirectory A LabShare package directory
+     * @param manifest package.json of a service
+     * @param key Name of the service
      * @description Parses package.json to retrieve relevent fields and exposes them on package.json
      * @returns {Object} Route /version and its information
      */
@@ -32,11 +33,12 @@ exports.config = function(data) {
     };
 
     /**
-     * @param directory A LabShare package directory
+     * @param endPoints List of routes exposed for that particular service
+     * @param key Name of the service
      * @description Exposes GET /endpoints to render api as table and POST /endpoints to return table as json
      * @returns {Object} Route /endpoints and its information
      */
-    function exposeEndPoint(endPoints, name) {
+    function exposeEndPoint(endPoints, key) {
         let endPointTable = "<table border='2' cellpadding='20'><thead><tr><td>#</td><td>Path</td><td>HTTP Method</td></thead><tbody>";
         for (let i = 0; i < endPoints.length; i++) {
             endPointTable += "<tr><td>" + i + "</td><td>" + endPoints[i].path + "</td><td>" + endPoints[i].httpMethod + "</td></tr>";
