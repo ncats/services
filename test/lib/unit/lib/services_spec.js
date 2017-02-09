@@ -1,6 +1,6 @@
 'use strict';
 
-const supertest = require('supertest-as-promised'),
+const supertest = require('supertest'),
     http = require('http'),
     clientio = require('socket.io-client'),
     portfinder = require('portfinder'),
