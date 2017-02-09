@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path'),
-    supertest = require('supertest-as-promised'),
+    supertest = require('supertest'),
     express = require('express'),
     {Router} = express,
     Q = require('q'),
