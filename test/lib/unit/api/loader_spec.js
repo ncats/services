@@ -105,14 +105,37 @@ describe('ApiLoader', () => {
             });
             apiLoader.setAPIs(); 
 
-            var promise = Q.all([
-                request.get('/api-package-1-namespace/endpoints').expect(200),
-                request.post('/api-package-1-namespace/endpoints').expect(200),
-                request.get('/api-package-1-namespace/version').expect(200),
-                request.post('/api-package-1-namespace/version').expect(404)
-            ]);
+           request.get(`/api-package-1-namespace/endpoints`)
+                .expect(200)
+                .then(res => {
 
-            promise.then(done).catch(done.fail);
+                    expect(res.text).not.toBe(null);
+                    done();
+                })
+
+           request.post(`/api-package-1-namespace/endpoints`)
+                .expect(200)
+                .then(res => {
+
+                    expect(res.text).not.toBe(null);
+                    done();
+                })
+           request.get(`/api-package-1-namespace/version`)
+                .expect(200)
+                .then(res => {
+
+                    expect(JSON.parse(res.text).name).toBe("api-package-1");
+                    expect(JSON.parse(res.text).version).toBe('0.0.1');
+                    done();
+                })
+
+           request.post(`/api-package-1-namespace/version`)
+                .expect(404)
+                .then(res => {
+                    expect(res.error).toBeTruthy();
+                    done();
+                })
+
         });
 
         it('calls the `config` functions specified by LabShare packages', done => {
