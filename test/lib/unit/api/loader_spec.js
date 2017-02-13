@@ -116,8 +116,10 @@ describe('ApiLoader', () => {
            request.post(`/api-package-1-namespace/endpoints`)
                 .expect(200)
                 .then(res => {
-
-                    expect(res.text).not.toBe(null);
+                    expect(res.body[0].path).toBe("/api-package-1-namespace/:param/_api/hello");
+                    expect(res.body[0].httpMethod).toBe("GET");
+                    expect(res.body[1].path).toBe("/api-package-1-namespace/:param/_api/settings");
+                    expect(res.body[1].httpMethod).toBe("POST");
                     done();
                 })
            request.get(`/api-package-1-namespace/version`)
