@@ -21,7 +21,7 @@ describe('ApiLoader', () => {
         request,
         options,
         apiPackage1Prefix,
-        loggerMock;
+        loggerMock, apiConfig;
 
     beforeEach(() => {
         packagePath = './test/fixtures/main-package';
@@ -39,6 +39,7 @@ describe('ApiLoader', () => {
         router = Router();
 
         ApiLoader = require('../../../../lib/api/loader');
+        apiConfig = require('../../../../api/api-config');
         apiLoader = new ApiLoader(router, options);
         expressApp.use(router);
         request = supertest(expressApp);
@@ -77,8 +78,9 @@ describe('ApiLoader', () => {
 
         it(`assigns all the valid package routes to the given router and runs the configuration functions
             exposed by package API modules`, function (done) {
+           
             apiLoader.initialize();
-            apiLoader.setAPIs();
+            apiLoader.setAPIs();           
 
             var promise = Q.all([
                 request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!'),
@@ -91,6 +93,51 @@ describe('ApiLoader', () => {
             ]);
 
             promise.then(done).catch(done.fail);
+        });
+
+
+        it(`will test if the end points assigned by api/api-config.json are working fine`, function (done) {
+
+             apiLoader.initialize();
+                  apiConfig.config({
+                apiLoader: apiLoader,
+                app: router
+            });
+            apiLoader.setAPIs(); 
+
+           request.get(`/api-package-1-namespace/endpoints`)
+                .expect(200)
+                .then(res => {
+
+                    expect(res.text).not.toBe(null);
+                    done();
+                })
+
+           request.post(`/api-package-1-namespace/endpoints`)
+                .expect(200)
+                .then(res => {
+                    expect(res.body[0].path).toBe("/api-package-1-namespace/:param/_api/hello");
+                    expect(res.body[0].httpMethod).toBe("GET");
+                    expect(res.body[1].path).toBe("/api-package-1-namespace/:param/_api/settings");
+                    expect(res.body[1].httpMethod).toBe("POST");
+                    done();
+                })
+           request.get(`/api-package-1-namespace/version`)
+                .expect(200)
+                .then(res => {
+
+                    expect(JSON.parse(res.text).name).toBe("api-package-1");
+                    expect(JSON.parse(res.text).version).toBe('0.0.1');
+                    done();
+                })
+
+           request.post(`/api-package-1-namespace/version`)
+                .expect(404)
+                .then(res => {
+                    expect(res.error).toBeTruthy();
+                    done();
+                })
+
         });
 
         it('calls the `config` functions specified by LabShare packages', done => {
