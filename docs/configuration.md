@@ -4,15 +4,44 @@ Default configuration: [sample-config.json](../sample-config.json)
 
 ### Listen
 
-TODO
+Corresponds to the `port` and `hostname` options in [http server documentation](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback).
+
+Default:
+```json
+{
+    "Listen": {
+        "Port": 8000,
+        "Url": "http://localhost"
+    }
+}
+```
 
 ### ServicePath
 
-TODO
+The `ServicePath` is the mountpoint the HTTP APIs will be set on. Default: '/'.
+
+Example:
+```json
+"ServicePath": "/_api"
+```
 
 ### Socket
 
-TODO
+#### connections
+
+The `connections` option can be used to establish P2P socket connections on start up. It defaults to an empty array.
+
+Example:
+```json
+"socket": {
+    "connections": [
+        "http://domain1.com/users",
+        "http://domain2.com/kittens"
+    ]
+}
+```
+
+After establishing a connection, events can be broadcast to the connections using the `io` instance exposed by `LabShare Services`.
 
 ### Security
 
@@ -31,10 +60,29 @@ Default:
           "httpOnly": true,
           "maxAge": 3600000,
           "secure": false
+        },
+        "store": null,
+        "storeOptions": {}
+    }
+}
+```
+
+By default, the sessions will use the `MemoryStore` from `express-session`. To use `connect-redis` instead, specify `store` as
+`connect-redis` and pass options to `connect-redis` using `sessionOptions.storeOptions`.
+
+Example:
+```json
+"security": {
+    "sessionOptions": {
+        "store": "connect-redis",
+        "storeOptions": {
+            // https://github.com/tj/connect-redis#options
         }
     }
 }
 ```
+
+You can also pass a constructor in the `store` option from https://github.com/expressjs/session#compatible-session-stores.
 
 #### corsOptions
 

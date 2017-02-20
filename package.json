@@ -2,7 +2,7 @@
   "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "v0.17.0130",
+  "version": "v0.17.0219",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
@@ -21,6 +21,7 @@
   "dependencies": {
     "async": "^2.1.4",
     "body-parser": "^1.15.1",
+    "connect-redis": "^3.2.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.7.1",
     "express": "^4.13.4",

@@ -108,4 +108,18 @@ describe('Services', () => {
         }).toThrowError(/cannot modify the LabShare API services after starting up the server/i);
     });
 
+    it('throws if an unsupported session store is set in the configuration', () => {
+        let services = new Services({
+            security: {
+                sessionOptions: {
+                    store: 'INVALID STORE'
+                }
+            }
+        });
+
+        expect(() => {
+            services.start();
+        }).toThrowError(/Session store "INVALID STORE" is not supported/i);
+    });
+
 });
