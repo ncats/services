@@ -1,3 +1,6 @@
+'use strict';
+
+const _ = require('lodash');
 
     /**
      * @param endPoints List of routes exposed for that particular service
@@ -6,9 +9,9 @@
      * @returns {Object} Route /endpoints and its information
      */
     exports.exposeEndPoint = function (endPoints, key) {
-        let endPointTable = "<table border='2' cellpadding='20'><thead><tr><td>#</td><td>Path</td><td>HTTP Method</td></thead><tbody>";
+        let endPointTable = "<table border='2' cellpadding='20'><thead><tr><td>#</td><td>HTTP Method</td><td>Path</td><td>Middleware(s)</td></thead><tbody>";
         for (let i = 0; i < endPoints.length; i++) {
-            endPointTable += "<tr><td>" + i + "</td><td>" + endPoints[i].path + "</td><td>" + endPoints[i].httpMethod + "</td></tr>";
+            endPointTable += "<tr><td>" + i + "</td><td>" + endPoints[i].httpMethod + "</td><td>" + endPoints[i].path +"</td><td>" +  _.map(endPoints[i].middleware, function(middleware) { return middleware.name; }).join(", ")  + "</td></tr>";
         }
         let finishendPointTable = "</tbody></table>"
 
