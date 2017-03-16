@@ -1,3 +1,5 @@
+'use strict';
+
     /**
      * @param manifest package.json of a service
      * @param key Name of the service

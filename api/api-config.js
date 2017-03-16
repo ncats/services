@@ -1,3 +1,5 @@
+'use strict';
+
 const version = require('./version'),
     endpoints = require('./endpoints');
 
