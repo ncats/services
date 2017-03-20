@@ -182,7 +182,7 @@ describe('ApiLoader', () => {
             apiLoader.initialize();
             apiLoader.setAPIs();
 
-            request.post(apiPackage1Prefix + '/open').expect(404, done);
+            request.post(apiPackage1Prefix + '/open').expect(404).then(done).catch(done.fail);
         });
 
         it('can load package APIs from directories specified by options.directories', function (done) {
