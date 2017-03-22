@@ -50,6 +50,7 @@ describe('ApiConfig', () => {
                     expect(res.text).not.toBe(null);
                     done();
                 })
+                .catch(done.fail);
 
         });
         
@@ -64,6 +65,7 @@ describe('ApiConfig', () => {
                     expect(res.body[1].httpMethod).toBe("POST");
                     done();
                 })
+                .catch(done.fail);
 
          });
 
@@ -75,6 +77,7 @@ describe('ApiConfig', () => {
                     expect(JSON.parse(res.text).version).toBe('0.0.1');
                     done();
                 })
+                .catch(done.fail);
         });
 
 
@@ -85,6 +88,7 @@ describe('ApiConfig', () => {
                     expect(res.error).toBeTruthy();
                     done();
                 })
+                .catch(done.fail);
 
         });
 
