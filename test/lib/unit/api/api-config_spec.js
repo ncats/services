@@ -39,7 +39,6 @@ describe('ApiConfig', () => {
                 app: router
             });
             apiLoader.setAPIs(); 
-
          });
 
         it(`will test if the GET /endpoints route assigned by api/api-config.js is working fine`, function (done) {
