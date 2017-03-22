@@ -17,7 +17,7 @@ exports.exposeVersionRoute = function (manifest, key) {
     }
 
     return {
-        path: `${key}/version`,
+        path: `/${key}/version`,
         httpMethod: 'GET',
         middleware: [returnPackage]
     };

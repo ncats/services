@@ -95,51 +95,6 @@ describe('ApiLoader', () => {
             promise.then(done).catch(done.fail);
         });
 
-
-        it(`will test if the end points assigned by api/api-config.json are working fine`, function (done) {
-
-             apiLoader.initialize();
-                  apiConfig.config({
-                apiLoader: apiLoader,
-                app: router
-            });
-            apiLoader.setAPIs(); 
-
-           request.get(`/api-package-1-namespace/endpoints`)
-                .expect(200)
-                .then(res => {
-
-                    expect(res.text).not.toBe(null);
-                    done();
-                })
-
-           request.post(`/api-package-1-namespace/endpoints`)
-                .expect(200)
-                .then(res => {
-                    expect(res.body[0].path).toBe("/api-package-1-namespace/:param/_api/hello");
-                    expect(res.body[0].httpMethod).toBe("GET");
-                    expect(res.body[1].path).toBe("/api-package-1-namespace/:param/_api/settings");
-                    expect(res.body[1].httpMethod).toBe("POST");
-                    done();
-                })
-           request.get(`/api-package-1-namespace/version`)
-                .expect(200)
-                .then(res => {
-
-                    expect(JSON.parse(res.text).name).toBe("api-package-1");
-                    expect(JSON.parse(res.text).version).toBe('0.0.1');
-                    done();
-                })
-
-           request.post(`/api-package-1-namespace/version`)
-                .expect(404)
-                .then(res => {
-                    expect(res.error).toBeTruthy();
-                    done();
-                })
-
-        });
-
         it('calls the `config` functions specified by LabShare packages', done => {
             apiLoader.initialize();
             apiLoader.setAPIs();
