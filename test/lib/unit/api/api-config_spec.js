@@ -70,8 +70,9 @@ describe('ApiConfig', () => {
 
          it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
            request.get("/api-package-1-namespace/version")
-                .expect(200)
+                .expect(404)
                 .then(res => {
+                    console.log(res);
                     expect(JSON.parse(res.text).name).toBe("api-package-1");
                     expect(JSON.parse(res.text).version).toBe('0.0.1');
                     done();
