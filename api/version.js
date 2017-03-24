@@ -3,7 +3,7 @@
 const _ = require('lodash');
 
 /**
- * @param manifest package.json of a service
+ * @param versionDependencies An apps dependencies and information gathered from their package.json
  * @param key Name of the service
  * @description Parses package.json to retrieve relevent fields and exposes them on package.json
  * @returns {Object} Route /version and its information

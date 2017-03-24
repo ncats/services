@@ -14,5 +14,6 @@ exports.config = function (data) {
             versionDependencies.push(version.versionDependencies(apiLoader.manifest[key], key));
         }
     }
+    
     apiLoader.services[_.head(_.head([versionDependencies])).api] = _.concat((apiLoader.services[_.head(_.head([versionDependencies])).api]), version.addVersionRoutes(versionDependencies, _.head(_.head([versionDependencies])).api));
 };
