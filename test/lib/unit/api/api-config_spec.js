@@ -69,7 +69,7 @@ describe('ApiConfig', () => {
          });
 
          it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
-           request.get("/main-package/version")
+           request.get("/version")
                 .expect(200)
                 .then(res => {
                     res.text = res.text ? JSON.parse(res.text) : {};
@@ -83,7 +83,7 @@ describe('ApiConfig', () => {
         });
 
          it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
-           request.get("/main-package/api-package-2/version")
+           request.get("/api-package-2/version")
                 .expect(200)
                 .then(res => {
                     res.text = res.text ? JSON.parse(res.text) : {};
