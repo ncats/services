@@ -24,12 +24,12 @@ exports.addVersionRoutes = function (versionDependencies, key) {
 
     return [
     {
-        path: `/${key}/version`,
+        path: `/version`,
         httpMethod: 'GET',
         middleware: [returnVersion]
     },
     {
-        path: `/${key}/:name/version`,
+        path: `/:name/version`,
         httpMethod: 'GET',
         middleware: [returnDependencies]
     }
