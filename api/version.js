@@ -40,5 +40,5 @@ exports.addVersionRoutes = function (versionDependencies, key) {
 
 
 exports.versionDependencies = function(manifest, key){
-    return { api: key, version: { "name": manifest.name, "version": manifest.version, "description": manifest.description} } ;
+    return { api: key, apiDetails: { "name": manifest.name, "version": manifest.version, "description": manifest.description} } ;
 }
