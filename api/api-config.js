@@ -7,11 +7,11 @@ const version = require('./version'),
 exports.config = function (data) {
     const {apiLoader, app} = data;
     const versionDependencies = [];
-
+    // console.log(apiLoader.services)
     for (let key in apiLoader.services) {
-        if (apiLoader.services.hasOwnProperty(key)) {
-            apiLoader.services[key] = _.concat(apiLoader.services[key],endpoints.exposeEndPoint(apiLoader.services[key], key));
-            versionDependencies.push(version.versionDependencies(apiLoader.manifest[key], key));
+        if (apiLoader.services.hasOwnProperty(key) && !_.isEmpty(apiLoader.services[key])) {
+                versionDependencies.push(version.versionDependencies(apiLoader.manifest[key], key));
+                apiLoader.services[key] = _.concat(apiLoader.services[key],endpoints.exposeEndPoint(apiLoader.services[key], key));
         }
     }
     

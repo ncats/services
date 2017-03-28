@@ -73,9 +73,9 @@ describe('ApiConfig', () => {
                 .expect(200)
                 .then(res => {
                     res.text = res.text ? JSON.parse(res.text) : {};
-                    expect((res.text[0]).api).toBe("main-package");
+                    expect((res.text[0]).api).toBe("api-package-1-namespace");
                     expect((res.text[0]).apiDetails.version).toBe('0.0.1');
-                    expect((res.text[1]).api).toBe('api-package-1-namespace');
+                    expect((res.text[1]).api).toBe('api-package-2');
                     expect((res.text[1]).apiDetails.version).toBe('0.0.1');
                     done();
                 })
