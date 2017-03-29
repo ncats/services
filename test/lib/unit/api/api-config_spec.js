@@ -6,7 +6,7 @@ const path = require('path'),
     {Router} = express;
 
 describe('ApiConfig', () => {
-        let ApiLoader,
+    let ApiLoader,
         apiLoader,
         expressApp,
         router,
@@ -14,10 +14,7 @@ describe('ApiConfig', () => {
         apiPackage1Prefix,
         apiConfig;
 
-         beforeEach(() => {
-
-
-
+    beforeEach(() => {
         apiPackage1Prefix = '/api-package-1-namespace';
 
         expressApp = express();
@@ -26,83 +23,95 @@ describe('ApiConfig', () => {
         ApiLoader = require('../../../../lib/api/loader');
         apiConfig = require('../../../../api/api-config');
         apiLoader = new ApiLoader(router, {
-            logger: { error: jasmine.createSpy('error') },
+            logger: {error: jasmine.createSpy('error')},
             main: './test/fixtures/main-package',
             ignore: []
         });
         expressApp.use(router);
         request = supertest(expressApp);
 
-             apiLoader.initialize();
-                  apiConfig.config({
-                apiLoader: apiLoader,
-                app: router
-            });
-            apiLoader.setAPIs(); 
-         });
+        apiLoader.initialize();
+        apiConfig.config({
+            apiLoader: apiLoader,
+            app: router
+        });
+        apiLoader.setAPIs();
+    });
 
-        it(`will test if the GET /endpoints route assigned by api/api-config.js is working fine`, function (done) {
+    describe('GET/POST /endpoints', () => {
 
-           request.get(`/api-package-1-namespace/endpoints`)
+        it(`gets all the API endpoints associated with the given LabShare package name`, done => {
+            request.get(`/api-package-1-namespace/endpoints`)
                 .expect(200)
                 .then(res => {
                     expect(res.text).not.toBe(null);
                     done();
                 })
                 .catch(done.fail);
-
         });
-        
-         it(`will test if the POST /endpoints route assigned by api/api-config.js is working fine`, function (done) {
 
-           request.post(`/api-package-1-namespace/endpoints`)
+        it(`gets all the API endpoints associated with the given LabShare package name`, done => {
+            request.post(`/api-package-1-namespace/endpoints`)
                 .expect(200)
                 .then(res => {
-                    expect(res.body[0].path).toBe("/api-package-1-namespace/:param/_api/hello");
-                    expect(res.body[0].httpMethod).toBe("GET");
-                    expect(res.body[1].path).toBe("/api-package-1-namespace/:param/_api/settings");
-                    expect(res.body[1].httpMethod).toBe("POST");
+                    expect(res.body[0].path).toBe('/api-package-1-namespace/:param/_api/hello');
+                    expect(res.body[0].httpMethod).toBe('GET');
+                    expect(res.body[1].path).toBe('/api-package-1-namespace/:param/_api/settings');
+                    expect(res.body[1].httpMethod).toBe('POST');
                     done();
                 })
                 .catch(done.fail);
+        });
 
-         });
+    });
 
-         it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
-           request.get("/version")
+    describe('GET /versions and GET /:name/version', () => {
+
+        it(`gets the package metadata of all LabShare packages that expose HTTP routes`, done => {
+            request.get('/versions')
                 .expect(200)
                 .then(res => {
-                    res.text = res.text ? JSON.parse(res.text) : {};
-                    expect((res.text[0]).api).toBe("api-package-1-namespace");
-                    expect((res.text[0]).apiDetails.version).toBe('0.0.1');
-                    expect((res.text[1]).api).toBe('api-package-2');
-                    expect((res.text[1]).apiDetails.version).toBe('0.0.1');
+                    expect(res.body.versions).toBeDefined();
+
+                    let versions = res.body.versions;
+
+                    expect(versions).toEqual(jasmine.arrayContaining([
+                        {
+                            api: 'api-package-1-namespace',
+                            apiDetails: {
+                                name: 'api-package-1',
+                                version: '0.0.1',
+                                description: 'Api package name space'
+                            }
+                        },
+                        {
+                            api: 'api-package-2',
+                            apiDetails: {
+                                name: 'api-package-2',
+                                version: '0.0.1'
+                            }
+                        }
+                    ]));
+
                     done();
                 })
                 .catch(done.fail);
         });
 
-         it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
-           request.get("/api-package-2/version")
+        it(`gets the metadata of an individual LabShare package`, done => {
+            request.get('/api-package-2/version')
                 .expect(200)
                 .then(res => {
-                    res.text = res.text ? JSON.parse(res.text) : {};
-                    expect(res.text.api).toBe("api-package-2");
-                    expect(res.text.apiDetails.version).toBe('0.0.1');
+                    expect(res.body.version.api).toBe('api-package-2');
+                    expect(res.body.version.apiDetails.version).toBe('0.0.1');
                     done();
                 })
                 .catch(done.fail);
         });
-        
-         it(`will test if the POST /version route which is NOT assigned by api/api-config.js throws a 404`, function (done) {
-           request.post(`/api-package-1-namespace/version`)
-                .expect(404)
-                .then(res => {
-                    expect(res.error).toBeTruthy();
-                    done();
-                })
-                .catch(done.fail);
 
+        it(`responds with a 404 when the LabShare package name does not exist`, done => {
+            request.post(`/api-package-1-namespace/version`).expect(404, done);
         });
 
+    });
 });
