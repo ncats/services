@@ -1,24 +1,44 @@
 'use strict';
 
+const _ = require('lodash');
+
 /**
- * @param manifest package.json of a service
+ * @param versionDependencies An apps dependencies and information gathered from their package.json
  * @param key Name of the service
  * @description Parses package.json to retrieve relevent fields and exposes them on package.json
  * @returns {Object} Route /version and its information
  */
-exports.exposeVersionRoute = function (manifest, key) {
+exports.addVersionRoutes = function (versionDependencies, key) {
 
-    function returnPackage(req, res) {
-        res.json(sanitizeManifest(manifest));
+    function returnVersion(req,res){
+        res.json(versionDependencies);
     }
 
-    function sanitizeManifest(manifest) {
-        return {"name": manifest.name, "version": manifest.version, "description": manifest.description};
+    function returnDependencies(req, res){
+        if (!_.find(versionDependencies, {api: req.params.name})){
+            res.sendStatus(404);
+        } else {
+            res.json(_.find(versionDependencies, {api: req.params.name}));
+        }
     }
 
-    return {
-        path: `/${key}/version`,
+    return [
+    {
+        path: `/version`,
         httpMethod: 'GET',
-        middleware: [returnPackage]
-    };
+        middleware: [returnVersion]
+    },
+    {
+        path: `/:name/version`,
+        httpMethod: 'GET',
+        middleware: [returnDependencies]
+    }
+        ];
+
+    
 };
+
+
+exports.versionDependencies = function(manifest, key){
+    return { api: key, apiDetails: { "name": manifest.name, "version": manifest.version, "description": manifest.description} } ;
+}

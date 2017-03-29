@@ -32,6 +32,6 @@ exports.exposeEndPoint = function (endPoints, key) {
         httpMethod: 'POST',
         middleware: [postReturnEndpoints]
     };
-
+    
     return [getendPointRoute, postendPointRoute];
 };

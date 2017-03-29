@@ -69,17 +69,31 @@ describe('ApiConfig', () => {
          });
 
          it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
-           request.get("/api-package-1-namespace/version")
+           request.get("/version")
                 .expect(200)
                 .then(res => {
-                    expect(JSON.parse(res.text).name).toBe("api-package-1");
-                    expect(JSON.parse(res.text).version).toBe('0.0.1');
+                    res.text = res.text ? JSON.parse(res.text) : {};
+                    expect((res.text[0]).api).toBe("api-package-1-namespace");
+                    expect((res.text[0]).apiDetails.version).toBe('0.0.1');
+                    expect((res.text[1]).api).toBe('api-package-2');
+                    expect((res.text[1]).apiDetails.version).toBe('0.0.1');
                     done();
                 })
                 .catch(done.fail);
         });
 
-
+         it(`will test if the GET /version route assigned by api/api-config.js is working fine`, function (done) {
+           request.get("/api-package-2/version")
+                .expect(200)
+                .then(res => {
+                    res.text = res.text ? JSON.parse(res.text) : {};
+                    expect(res.text.api).toBe("api-package-2");
+                    expect(res.text.apiDetails.version).toBe('0.0.1');
+                    done();
+                })
+                .catch(done.fail);
+        });
+        
          it(`will test if the POST /version route which is NOT assigned by api/api-config.js throws a 404`, function (done) {
            request.post(`/api-package-1-namespace/version`)
                 .expect(404)
