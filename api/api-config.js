@@ -64,7 +64,6 @@ function exposeEndPoints(routes, key) {
         if (!endpoint) {
             return;
         }
-        // console.log(endpoint, index);
         endPointTable += `<tr><td>${index}</td><td>${endpoint.httpMethod}</td><td>${endpoint.path}</td></tr>`;
     });
 

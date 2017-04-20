@@ -28,8 +28,6 @@ let endpointDoc = "api-doc.html";
 
 exports.config = function (data) {
     const {apiLoader} = data;
-    console.log(apiLoader.options);
-
     var swaggerConfig = {
     swaggerDefinition: {
         info: {
