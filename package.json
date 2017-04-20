@@ -30,11 +30,13 @@
     "helmet": "^3.3.0",
     "lodash": "^4.13.1",
     "morgan": "^1.7.0",
+    "pretty-swag": "^0.1.98",
     "q": "^1.4.1",
     "restler": "^3.4.0",
     "revalidator": "^0.3.1",
     "socket.io": "^1.7.2",
-    "socket.io-client": "^1.7.2"
+    "socket.io-client": "^1.7.2",
+    "swagger-jsdoc": "^1.9.2"
   },
   "devDependencies": {
     "istanbul": "^0.4.2",

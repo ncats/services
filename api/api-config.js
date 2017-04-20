@@ -2,6 +2,8 @@
 
 const _ = require('lodash');
 
+
+
 /**
  * @param versionDependencies An apps dependencies and information gathered from their package.json
  * @description Parses package.json to retrieve relevant metadata
@@ -62,7 +64,6 @@ function exposeEndPoints(routes, key) {
         if (!endpoint) {
             return;
         }
-        // console.log(endpoint, index);
         endPointTable += `<tr><td>${index}</td><td>${endpoint.httpMethod}</td><td>${endpoint.path}</td></tr>`;
     });
 
@@ -99,7 +100,7 @@ exports.config = function (data) {
 
     apiLoader.services['services'] = _.concat(apiLoader.services['services'] || [], addVersionRoutes(versionDependencies));
 
-    _.each(apiLoader.services, (routes, key) => {
+     _.each(apiLoader.services, (routes, key) => {
         if (_.isEmpty(routes)) {
             return;
         }
