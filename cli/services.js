@@ -11,8 +11,8 @@ exports.usage = [
 exports.start = function () {
     this.log.info('Starting LabShare services...');
 
-    var options = _.get(global.LabShare, 'Config.services');
+    let options = _.get(global.LabShare, 'Config.services'),
+        services = new Services(options);
 
-    let services = new Services(options);
     services.start();
 };

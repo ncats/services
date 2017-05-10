@@ -11,6 +11,7 @@ function addVersionRoutes(versionDependencies) {
 
     function returnVersion(req, res) {
         res.json({
+            buildVersion: process.env.BUILD_VERSION || 'unknown',
             versions: versionDependencies
         });
     }
@@ -56,7 +57,7 @@ function getMetadata(manifest, key) {
  * @returns {Object} Route /endpoints and its information
  */
 function exposeEndPoints(routes, key) {
-    let endPointTable = "<table border='2' cellpadding='20'><thead><tr><td>#</td><td>HTTP Method</td><td>Path</td></thead><tbody>";
+    let endPointTable = `<table border='2' cellpadding='20'><thead><tr><td>#</td><td>HTTP Method</td><td>Path</td></thead><tbody>`;
 
     routes.forEach((endpoint, index) => {
         if (!endpoint) {

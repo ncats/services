@@ -28,6 +28,7 @@ services.start();
 ## Configuration
 
 ### [Configuring LabShare Services](docs/configuration.md)
+### [Environment Variables](docs/env-vars.md)
 
 ## Working with LabShare APIs
 ### [Running APIs](docs/run-package.md)
