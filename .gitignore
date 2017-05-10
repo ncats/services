@@ -20,6 +20,7 @@ config.json
 
 # Services Config
 services.json
+.env
 
 # Runtime data
 pids
