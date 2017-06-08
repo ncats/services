@@ -1,0 +1,15 @@
+sg_fluentd:
+  users:
+    - fluentd
+
+sg_kibana_server:
+  users:
+    - kibanaserver
+
+sg_kibana:
+  users:
+    - kibanaro
+
+sg_all_access:
+  users:
+    - admin
