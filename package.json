@@ -2,7 +2,7 @@
   "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "v0.17.0510",
+  "version": "v0.17.0608",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
@@ -34,8 +34,8 @@
     "q": "^1.4.1",
     "restler": "^3.4.0",
     "revalidator": "^0.3.1",
-    "socket.io": "^1.7.2",
-    "socket.io-client": "^1.7.2"
+    "socket.io": "^2.0.2",
+    "socket.io-client": "^2.0.2"
   },
   "devDependencies": {
     "istanbul": "^0.4.2",
