@@ -1,7 +1,7 @@
 # LabShare Services
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3b8ace2fa2784cf29a19a3f2dfd3cc60)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LabShare/services&amp;utm_campaign=Badge_Grade)
-[![Build Status](https://travis-ci.com/LabShare/services.svg?token=Y1xBXqo2AsyTGxuGHcYM&branch=master)](https://travis-ci.com/LabShare/services)
+[![Build Status](https://travis-ci.com/LabShare/services.svg?token=zsifsALL6Np5avzzjVp1&branch=master)](https://travis-ci.com/LabShare/services)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/3b8ace2fa2784cf29a19a3f2dfd3cc60)](https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=LabShare/services&utm_campaign=Badge_Coverage)
 
 ## Usage
