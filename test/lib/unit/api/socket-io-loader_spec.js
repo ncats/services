@@ -3,18 +3,23 @@
 const path = require('path'),
     http = require('http'),
     _ = require('lodash'),
+    fs = require('fs'),
     portfinder = require('portfinder'),
-    clientio = require('socket.io-client');
+    ss = require('socket.io-stream'),
+    temp = require('temp').track(),
+    clientio = require('socket.io-client'),
+    readChunk = require('read-chunk'),
+    isJpg = require('is-jpg'),  // used to verify binary stream result. See: https://www.npmjs.com/package/is-jpg
+    SocketIOLoader = require('../../../../lib/api/socket-io-loader');
 
 describe('SocketIOLoader', () => {
 
-    let SocketIOLoader,
-        socketLoader,
+    let socketLoader,
         port,
         packagePath,
         options,
         server,
-        apiPackage1Prefix;
+        socketApiNamespace;
 
     beforeEach(done => {
         packagePath = './test/fixtures/main-package';
@@ -22,9 +27,7 @@ describe('SocketIOLoader', () => {
             main: packagePath,
             directories: [path.join(packagePath, 'node_modules', 'socket-api-package1')]
         };
-        apiPackage1Prefix = '/socket-api-package-1-namespace';
-
-        SocketIOLoader = require('../../../../lib/api/socket-io-loader');
+        socketApiNamespace = '/socket-api-package-1-namespace';
 
         portfinder.getPort((err, unusedPort) => {
             if (err) {
@@ -106,9 +109,9 @@ describe('SocketIOLoader', () => {
         it('establishes socket connections for all packages', done => {
             socketLoader.connect();
 
-            let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
+            let clientSocket = clientio.connect(`http://localhost:${port}${socketApiNamespace}`);
 
-            clientSocket.once('connect', (data) => {
+            clientSocket.once('connect', () => {
                 clientSocket.emit('process-something', 'Data', (error, result) => {
                     expect(error).toBeNull();
                     expect(result).toBe('data');
@@ -122,7 +125,7 @@ describe('SocketIOLoader', () => {
         it('applies optional middleware to sockets', done => {
             socketLoader.connect();
 
-            let clientSocket = clientio.connect(`http://localhost:${port}${apiPackage1Prefix}`);
+            let clientSocket = clientio.connect(`http://localhost:${port}${socketApiNamespace}`);
 
             clientSocket.emit('send-email', error => {
                 expect(error.message).toBe('No email provided!');
@@ -143,7 +146,7 @@ describe('SocketIOLoader', () => {
             });
         });
 
-        it('establishes P2P client connections too', done => {
+        it('establishes P2P server connections', done => {
             let socketLoader1 = new SocketIOLoader(server1, {
                 main: packagePath
             });
@@ -152,8 +155,8 @@ describe('SocketIOLoader', () => {
 
             let socketLoader2 = new SocketIOLoader(server2, {
                 main: packagePath,
-                socket:{
-                    connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
+                socket: {
+                    connections: [`http://localhost:${port1}${socketApiNamespace}`]
                 }
 
             });
@@ -185,7 +188,7 @@ describe('SocketIOLoader', () => {
             let socketLoader2 = new SocketIOLoader(server2, {
                 main: packagePath,
                 socket: {
-                    connections: [`http://localhost:${port1}${apiPackage1Prefix}`]
+                    connections: [`http://localhost:${port1}${socketApiNamespace}`]
                 }
 
             });
@@ -193,9 +196,124 @@ describe('SocketIOLoader', () => {
             socketLoader2.connect();
 
             socketLoader2.on('error', message => {
-                expect(message).toContain(`failed to connect to: http://localhost:${port1}${apiPackage1Prefix}`);
+                expect(message).toContain(`failed to connect to: http://localhost:${port1}${socketApiNamespace}`);
                 done();
             });
+        });
+
+        describe('and processing "stream" type sockets', () => {
+
+            let tempDirectory,
+                clientSocket,
+                stream;
+
+            beforeEach(() => {
+                tempDirectory = temp.mkdirSync();
+                stream = ss.createStream();
+                socketLoader.connect();
+                clientSocket = clientio.connect(`http://localhost:${port}${socketApiNamespace}`);
+            });
+
+            afterEach(() => {
+                temp.cleanupSync();
+                clientSocket.disconnect();
+            });
+
+            it('can send and receive a buffered stream if the socket type is "stream"', done => {
+                let outputFilePath = path.join(tempDirectory, 'file.txt');
+
+                stream.on('error', done.fail);
+                ss(clientSocket).emit('download-file', stream, {fileName: 'hello-world.txt'});
+
+                let writeStream = fs.createWriteStream(outputFilePath);
+
+                writeStream.on('error', done.fail);
+                writeStream.on('finish', () => {
+                    expect(fs.readFileSync(outputFilePath)).toContain('Hello world!');
+                    done();
+                });
+
+                stream.pipe(writeStream);
+            });
+
+            it('can send/receive binary data', done => {
+                let outputFilePath = path.join(tempDirectory, 'cat.jpg');
+
+                stream.on('error', done.fail);
+
+                // Test ack callback usage too
+                ss(clientSocket).emit('download-file', stream, {fileName: 'monorail-cat.jpg'}, message => {
+                    expect(message).toContain('Started download');
+
+                    let writeStream = fs.createWriteStream(outputFilePath);
+
+                    writeStream.on('error', done.fail);
+                    writeStream.on('finish', () => {
+                        expect(fs.existsSync(outputFilePath)).toBeTruthy();
+
+                        let buffer = readChunk.sync(outputFilePath, 0, 3);
+
+                        expect(isJpg(buffer)).toBeTruthy();
+                        done();
+                    });
+
+                    stream.pipe(writeStream);
+                });
+            });
+
+            it('supports multiple streams', done => {
+                let outputFilePath1 = path.join(tempDirectory, 'cat.jpg'),
+                    outputFilePath2 = path.join(tempDirectory, 'more-cats.jpg'),
+                    stream1 = ss.createStream(),
+                    stream2 = ss.createStream(),
+                    completedStreams = 0;
+
+                stream1.on('error', done.fail);
+                stream2.on('error', done.fail);
+
+                ss(clientSocket).emit('download-multi-stream', stream1, {stream2, fileName: 'monorail-cat.jpg'}, message => {
+                    expect(message).toContain('Started download');
+
+                    let writeStream1 = fs.createWriteStream(outputFilePath1),
+                        writeStream2 = fs.createWriteStream(outputFilePath2);
+
+                    writeStream1.on('error', done.fail);
+                    writeStream2.on('error', done.fail);
+
+                    writeStream1.on('finish', () => {
+                        expect(fs.existsSync(outputFilePath1)).toBeTruthy();
+                        let buffer = readChunk.sync(outputFilePath1, 0, 3);
+                        expect(isJpg(buffer)).toBeTruthy();
+
+                        // Wait until both streams have finished writing before ending the test
+                        if (++completedStreams > 1) {
+                            done();
+                        }
+                    });
+                    writeStream2.on('finish', () => {
+                        expect(fs.existsSync(outputFilePath2)).toBeTruthy();
+                        let buffer = readChunk.sync(outputFilePath2, 0, 3);
+                        expect(isJpg(buffer)).toBeTruthy();
+
+                        if (++completedStreams > 1) {
+                            done();
+                        }
+                    });
+
+                    stream1.pipe(writeStream1);
+                    stream2.pipe(writeStream2);
+                });
+            });
+
+            it('fails if an invalid stream is sent', done => {
+                stream.on('error', done.fail);
+
+                ss(clientSocket).emit('download-file', {}, message => {
+                    expect(message.error).toContain('Invalid stream');
+                    done();
+                });
+            });
+
         });
 
     });
