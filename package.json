@@ -2,7 +2,7 @@
   "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "v0.17.0608",
+  "version": "v0.17.0609",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
@@ -35,14 +35,18 @@
     "restler": "^3.4.0",
     "revalidator": "^0.3.1",
     "socket.io": "^2.0.2",
-    "socket.io-client": "^2.0.2"
+    "socket.io-client": "^2.0.2",
+    "socket.io-stream": "^0.9.1"
   },
   "devDependencies": {
+    "is-jpg": "^1.0.0",
     "istanbul": "^0.4.2",
     "jasmine": "^2.5.2",
     "jasmine-core": "^2.2.0",
     "portfinder": "^1.0.10",
     "proxyquire": "^1.4.0",
-    "supertest": "^3.0.0"
+    "read-chunk": "^2.0.0",
+    "supertest": "^3.0.0",
+    "temp": "^0.8.3"
   }
 }
