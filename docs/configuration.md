@@ -2,16 +2,16 @@
 
 Default configuration: [sample-config.json](../sample-config.json)
 
-### Listen
+### listen
 
-Corresponds to the `port` and `hostname` options in [http server documentation](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback).
+Allows customization of the `port` and `hostname` options in [http server documentation](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback).
 
 Default:
 ```json
 {
-    "Listen": {
-        "Port": 8000,
-        "Url": "http://localhost"
+    "listen": {
+        "port": 8000,
+        "url": "http://localhost"
     }
 }
 ```

@@ -30,21 +30,14 @@ describe('Services', () => {
 
             port = unusedPort;
 
-            global.LabShare = {
-                Config: {
-                    services: {
-                        Listen: {
-                            Port: unusedPort
-                        }
-                    }
-                }
-            };
-
             options = {
                 logger: loggerMock,
                 main: packagesPath,
                 morgan: {
                     enable: false
+                },
+                listen: {
+                    port
                 },
                 connections: []
             };
