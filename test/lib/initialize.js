@@ -6,7 +6,7 @@ const supertest = require('supertest-as-promised'),
 
 module.exports = function initialize(jasmine, callback) {
     jasmine.getEnv().defaultTimeoutInterval = '45000';  // 45 seconds
-    let apiURL = _.get(global.LabShare, 'Config.services.Listen.Url', 'http://127.0.0.1') + ':' + _.get(global.LabShare, 'Config.services.Listen.Port', '8000');
+    let apiURL = _.get(global.LabShare, 'Config.services.listen.url', 'http://127.0.0.1') + ':' + _.get(global.LabShare, 'Config.services.listen.port', '8000');
 
     let data = {
         request: supertest(apiURL),
