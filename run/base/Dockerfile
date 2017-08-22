@@ -1,8 +1,7 @@
-FROM node:6
+FROM keymetrics/pm2-docker-alpine:6
 
-# Update aptitude with new repo
-RUN apt-get -y update && apt-get -y upgrade && apt-get install -y git
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh
 
 # Add global node packages
-RUN npm i -g pm2 lsc
-
+RUN npm i -g lsc
