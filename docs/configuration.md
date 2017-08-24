@@ -84,21 +84,6 @@ Example:
 
 You can also pass a constructor in the `store` option from https://github.com/expressjs/session#compatible-session-stores.
 
-#### corsOptions
-
-The `corsOptions` object corresponds to the options used by [cors](https://www.npmjs.com/package/cors#configuration-options).
-
-Default:
-```json
-"security": {
-    "corsOptions": {
-        "origin": "*",
-        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-        "preflightContinue": false
-    }
-}
-```
-
 #### Additional
 
 The `security` object can also contain directives for several other security libraries. For a complete list, visit [helmet](https://www.npmjs.com/package/helmet#how-it-works) and [helmet docs](https://helmetjs.github.io/docs/).
