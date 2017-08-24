@@ -86,6 +86,7 @@ describe('ApiLoader', () => {
                 request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!'),
                 request.post('/api-package-1-namespace/123/_api/settings').expect(200),
                 request.post('/api-package-1-namespace/open').expect(200),
+                request.options('/api-package-2/list/mylist/items').expect(200),
                 request.post('/api-package-2/list/mylist/items').expect(200),
                 request.get('/api-package-2/list/mylist/items/123').expect(200),
                 request.put('/api-package-2/list/mylist/items/123').expect(400),

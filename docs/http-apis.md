@@ -7,20 +7,25 @@ the following properties:
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| httpMethod | String | It can be one of 'GET', 'POST', 'PUT', and 'DELETE'. |
+| httpMethod | String or Array | One or more of the HTTP methods described here: [methods](http://expressjs.com/en/api.html#app.METHOD). |
 | path | String | The relative API resource path (e.g. '/users/create'). |
-| middleware | Array or Function | One or more Express JS middleware functions. You can define more than one middleware function by assigning an array of middleware functions to the middleware property.  For more information on creating Express JS middleware, visit: [Express documentation](http://expressjs.com/guide/using-middleware.html).  |
+| middleware | Array or Function | One or more Express JS middleware functions. For more information on creating Express.js middleware, visit: [Express.js documentation](http://expressjs.com/guide/using-middleware.html).  |
 
 Example:
 
 ```javascript
 // hello-package/api/helloworld.js
-var helloworld = module.exports;
-function hello(request, response, next) {
-    response.send('Hello world!');
+function hello(req, res, next) {
+    res.send('Hello world!');
 }
-helloService.routes = [
-    { path: '/hello', httpMethod: 'GET', middleware: hello }
+
+function bye(req, res, next) {
+    res.send('Bye');
+}
+
+exports.routes = [
+    { path: '/hello', httpMethod: 'GET', middleware: hello },
+    { path: '/bye', httpMethod: ['OPTIONS', 'POST'], middleware: bye}
 ]
 ```
 
@@ -51,4 +56,4 @@ By default, the config function will be called with an object containing the fol
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | apiLoader | Object | A ApiLoader instance. It contains methods for assigning APIs and running global API config functions. |
-| app | Object | The Express router instance used by the `Services` class. |
+| app | Object | The Express router instance used by the LabShare `Services` class. |
