@@ -11,7 +11,7 @@ function addVersionRoutes(versionDependencies) {
 
     function returnVersion(req, res) {
         res.json({
-            buildVersion: process.env.BUILD_VERSION || 'unknown',
+            buildVersion: process.env.LABSHARE_BUILD_VERSION || 'unknown',
             versions: versionDependencies
         });
     }
