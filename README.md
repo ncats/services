@@ -25,6 +25,42 @@ services.config(({app, services}) => {
 services.start();
 ```
 
+## HTTP Routes
+
+### Versions
+
+```
+GET /<service-path>/versions
+```
+
+__Response__
+```
+{
+   "buildVersion":"v2017.0914.5",
+   "versions": [
+       {"api":"ls", apiDetails":{"name":"labshare","version":"v0.17.0631","description":"LabShare Services"}}
+   ]
+}
+```
+
+Example:
+http://localhost:8000/versions
+
+### Endpoints
+
+```
+GET /<service-path>/<project-name>/endpoints
+POST /<service-path>/<project-name>/endpoints
+```
+
+__Response__
+```
+HTML table with the HTTP routes of the provided project name.
+```
+
+Example:
+http://localhost:8000/services/endpoints
+
 ## Configuration
 
 ### [Configuring LabShare Services](docs/configuration.md)
