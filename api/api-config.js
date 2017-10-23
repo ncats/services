@@ -1,6 +1,7 @@
 'use strict';
 
-const _ = require('lodash');
+const _ = require('lodash'),
+    cors = require('cors');
 
 /**
  * @param versionDependencies An apps dependencies and information gathered from their package.json
@@ -31,13 +32,13 @@ function addVersionRoutes(versionDependencies) {
     return [
         {
             path: `/versions`,
-            httpMethod: 'GET',
-            middleware: [returnVersion]
+            httpMethod: ['OPTIONS', 'GET'],
+            middleware: [cors(), returnVersion]
         },
         {
             path: `/:name/version`,
-            httpMethod: 'GET',
-            middleware: [returnDependencies]
+            httpMethod: ['OPTIONS', 'GET'],
+            middleware: [cors(), returnDependencies]
         }
     ];
 }
@@ -80,13 +81,13 @@ function exposeEndPoints(routes, key) {
     return [
         {
             path: `/${key}/endpoints`,
-            httpMethod: 'GET',
-            middleware: [getReturnEndpoints]
+            httpMethod: ['OPTIONS', 'GET'],
+            middleware: [cors(), getReturnEndpoints]
         },
         {
             path: `/${key}/endpoints`,
-            httpMethod: 'POST',
-            middleware: [postReturnEndpoints]
+            httpMethod: ['OPTIONS', 'POST'],
+            middleware: [cors(), postReturnEndpoints]
         }
     ];
 }
