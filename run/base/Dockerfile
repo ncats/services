@@ -1,4 +1,4 @@
-FROM keymetrics/pm2-docker-alpine:6
+FROM keymetrics/pm2-docker-alpine:8
 
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh
