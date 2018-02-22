@@ -4,3 +4,6 @@ test
 .npmignore
 .gitmodules
 *.md
+config.json
+.snyk
+.nsprc
