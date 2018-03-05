@@ -43,6 +43,20 @@ Example:
 
 After establishing a connection, events can be broadcast to the connections using the `io` instance exposed by `LabShare Services`.
 
+### bodyParser
+
+The `bodyParser` property allows options to be passed to the Express.js bodyParser.
+
+Example:
+```json
+"bodyParser": {
+  "json": {},
+  "urlencoded": {
+    "extended": true
+  }
+}
+```
+
 ### Security
 
 The configuration options in `security` allow you to add or modify `LabShare Service`'s default security headers, CORS settings, session cookies, and so on.
