@@ -35,10 +35,11 @@
     "morgan": "^1.7.0",
     "q": "^1.4.1",
     "revalidator": "^0.3.1",
+    "server-shutdown": "^1.0.1",
+    "snyk": "^1.69.1",
     "socket.io": "^2.0.2",
     "socket.io-client": "^2.0.2",
-    "socket.io-stream": "^0.9.1",
-    "snyk": "^1.69.1"
+    "socket.io-stream": "^0.9.1"
   },
   "devDependencies": {
     "coveralls": "^3.0.1",
