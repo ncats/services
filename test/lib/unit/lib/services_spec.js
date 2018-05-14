@@ -98,6 +98,18 @@ describe('Services', () => {
             .expect(404, done)
     });
 
+    it('supports Redis as a Session backing store', () => {
+        options.security = {
+            sessionOptions: {
+                store: 'connect-redis'
+            }
+        };
+
+        const services = new Services(options);
+
+        services.start();
+    });
+
     it('throws if configuration is applied after the server is started', () => {
         let services = new Services(options);
 
