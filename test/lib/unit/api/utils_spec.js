@@ -1,30 +1,13 @@
 'use strict';
 
-const proxyquire = require('proxyquire'),
-    path = require('path');
+const path = require('path'),
+    packageUtils = require('../../../../lib/api/utils');
 
 describe('PackageUtils', () => {
 
-    let packageUtils,
-        directory,
-        fsMock;
-
-    beforeEach(() => {
-        directory = path.join('path', 'to', 'dir');
-        fsMock = jasmine.createSpyObj('fs', ['readdirSync', 'lstatSync', 'unlinkSync', 'realpathSync', 'realpath']);
-        packageUtils = proxyquire('../../../../lib/api/utils', {
-            'fs': fsMock
-        });
-    });
+    const packagesPath = './test/fixtures';
 
     describe('.isPackageSync()', () => {
-
-        let packagesPath;
-
-        beforeEach(() => {
-            packageUtils = require('../../../../lib/api/utils');
-            packagesPath = './test/fixtures';
-        });
 
         it('checks if a directory contains a LabShare package', () => {
             expect(packageUtils.isPackageSync(packagesPath)).toBeFalsy();
@@ -78,6 +61,7 @@ describe('PackageUtils', () => {
                     "packageDependencies": 123
 
                 };
+
             expect(packageUtils.getPackageDependencies(noPackageDeps)).toEqual([]);
             expect(packageUtils.getPackageDependencies(null)).toEqual([]);
             expect(packageUtils.getPackageDependencies(invalidDepDefinition)).toEqual([]);
@@ -87,10 +71,6 @@ describe('PackageUtils', () => {
 
     describe('.getPackageManifest', () => {
 
-        beforeEach(() => {
-            spyOn(packageUtils, 'readJSON');
-        });
-
         it('throws with invalid arguments', () => {
             expect(() => {
                 packageUtils.getPackageManifest(null);
@@ -98,32 +78,19 @@ describe('PackageUtils', () => {
         });
 
         it('throws if the manifest does not have a name', () => {
-            let emptyManifest = {};
-            packageUtils.readJSON.and.returnValue(emptyManifest);
             expect(() => {
-                packageUtils.getPackageManifest(directory)
+                packageUtils.getPackageManifest(path.join(packagesPath, 'files'));
             }).toThrow();
         });
 
         it('retrieves the directory\'s manifest', () => {
-            expect(packageUtils.getPackageManifest(directory)).toBeNull();
-
-            let validManifest = {name: 'pack1'};
-            packageUtils.readJSON.and.returnValue(validManifest);
-            expect(packageUtils.getPackageManifest(directory)).toBe(validManifest);
-        });
-
-    });
-
-    describe('.isIgnored', () => {
-
-        it('checks if a package is ignored by its name', () => {
-            expect(packageUtils.isIgnored({name: 'pack1'}, ['pack2', 'pack1'])).toBeTruthy();
-            expect(packageUtils.isIgnored({name: 'pack1'}, ['pack2', 'pack2'])).toBeFalsy();
-            expect(packageUtils.isIgnored({}, ['pack2', 'pack2'])).toBeFalsy();
-            expect(packageUtils.isIgnored({namespace: 'pack1'}, ['pack1', 'pack2'])).toBeTruthy();
-            expect(packageUtils.isIgnored(null, ['pack1', 'pack2'])).toBeFalsy();
-            expect(packageUtils.isIgnored({name: 'pack3', namespace: 'pack2'}, ['pack1', 'pack2'])).toBeTruthy();
+            expect(packageUtils.getPackageManifest('not/a/real/path')).toBeNull();
+            expect(packageUtils.getPackageManifest(
+                path.join(packagesPath, 'main-package')
+            ))
+                .toEqual(jasmine.objectContaining({
+                    name: 'main-package'
+                }));
         });
 
     });

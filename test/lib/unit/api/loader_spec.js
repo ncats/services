@@ -46,35 +46,35 @@ describe('ApiLoader', () => {
     });
 
     it('throws an exception when invalid arguments and/or options are provided', () => {
-        expect(function () {
+        expect(() => {
             new ApiLoader(router, {
                 main: [123]
             });
         }).toThrow();
-        expect(function () {
+        expect(() => {
             new ApiLoader({})
         }).toThrow();
-        expect(function () {
+        expect(() => {
             new ApiLoader(router, {
                 logger: {
                     error: null
                 }
             });
         }).toThrow();
-        expect(function () {
+        expect(() => {
             new ApiLoader(router, {
                 directories: ['a/directory', 5]
             });
         }).toThrow();
     });
 
-    it('does not throw if options are not provided', function () {
-        expect(function () {
+    it('does not throw if options are not provided', () => {
+        expect(() => {
             new ApiLoader(router);
         }).not.toThrow();
     });
 
-    describe('when loading routes', function () {
+    describe('when loading routes', () => {
 
         it(`assigns all the valid package routes to the given router and runs the configuration functions
             exposed by package API modules`, function (done) {
@@ -107,7 +107,7 @@ describe('ApiLoader', () => {
             request.get('/custom/api/route').expect(200).then(done).catch(done.fail);
         });
 
-        it('logs errors for invalid routes or duplicates', function () {
+        it('logs errors for invalid routes or duplicates', () => {
             options.ignore = [];
             apiLoader = new ApiLoader(router, options);
 
@@ -122,23 +122,13 @@ describe('ApiLoader', () => {
             expect(errors).toContain('Error: Invalid route "{"path":"/documents","middleware":[null]}" from package "invalid-api-package": httpMethod is required');
         });
 
-        it('throws exceptions for invalid routes if a logger is not provided', function () {
+        it('throws exceptions for invalid routes if a logger is not provided', () => {
             options.logger = null;
             apiLoader = new ApiLoader(router, options);
 
-            expect(function () {
+            expect(() => {
                 apiLoader.initialize();
             }).toThrow();
-        });
-
-        it('can ignore packages by name', function (done) {
-            options.ignore = ['api-package-1'];
-
-            apiLoader = new ApiLoader(router, options);
-            apiLoader.initialize();
-            apiLoader.setAPIs();
-
-            request.post(apiPackage1Prefix + '/open').expect(404).then(done).catch(done.fail);
         });
 
         it('can load package APIs from directories specified by options.directories', function (done) {
@@ -153,7 +143,7 @@ describe('ApiLoader', () => {
                 .catch(done.fail);
         });
 
-        it('does not store duplicate routers in the router', function () {
+        it('does not store duplicate routers in the router', () => {
             var apiPackage1Path = path.join(packagePath, 'node_modules', 'api-package1');
             apiLoader = new ApiLoader(router, {
                 directories: [apiPackage1Path, apiPackage1Path, apiPackage1Path]
