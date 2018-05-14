@@ -1,9 +1,15 @@
 build
 docs
 test
+run
+coverage
 .npmignore
+.gitignore
 .gitmodules
 *.md
 config.json
 .snyk
 .nsprc
+sample-services.json
+sample-config.json
+greenkeeper.json
