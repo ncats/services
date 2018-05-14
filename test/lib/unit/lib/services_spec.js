@@ -1,25 +1,23 @@
 'use strict';
 
 const supertest = require('supertest'),
-    http = require('http'),
     clientio = require('socket.io-client'),
     portfinder = require('portfinder'),
+    Services = require('../../../../lib/services'),
     _ = require('lodash');
 
 describe('Services', () => {
 
-    let packagesPath,
-        Services,
-        services,
+    const packagesPath = './test/fixtures/main-package',
+        apiPackage1Prefix = '/socket-api-package-1-namespace';
+
+    let services,
         port,
         loggerMock,
         server,
-        apiPackage1Prefix,
         options;
 
     beforeEach(done => {
-        packagesPath = './test/fixtures/main-package';
-        apiPackage1Prefix = '/socket-api-package-1-namespace';
         loggerMock = jasmine.createSpyObj('logger', ['error', 'info', 'warn']);
 
         portfinder.getPort((error, unusedPort) => {
@@ -42,7 +40,6 @@ describe('Services', () => {
                 connections: []
             };
 
-            Services = require('../../../../lib/services');
             services = new Services(options);
 
             done();
@@ -69,7 +66,7 @@ describe('Services', () => {
         expect(global.LabShare.IO).toBeDefined();
 
         request.get('/api-package-1-namespace/123/_api/hello')
-            .expect('Hello World!')
+            .expect(200, 'Hello World!')
             .then(data => {
                 // Check default security headers
                 expect(data.headers['x-powered-by']).toBeUndefined();
@@ -78,7 +75,7 @@ describe('Services', () => {
                 expect(data.headers['x-xss-protection']).toBe('1; mode=block');
 
                 // Test socket connections
-                clientSocket.once('connect', (data) => {
+                clientSocket.once('connect', () => {
                     clientSocket.emit('process-something', 'Data', (error, data) => {
                         expect(data).toBe('data');
 
@@ -88,6 +85,17 @@ describe('Services', () => {
                 });
             })
             .catch(done.fail);
+    });
+
+    it('does not enable REST/Socket APIs if not configured', (done) => {
+        options.loadServices = false;
+
+        const services = new Services(options);
+        server = services.start();
+        const request = supertest(server);
+
+        request.get('/api-package-1-namespace/123/_api/hello')
+            .expect(404, done)
     });
 
     it('throws if configuration is applied after the server is started', () => {
