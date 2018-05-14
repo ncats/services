@@ -48,15 +48,15 @@ describe('SocketIOLoader', () => {
     });
 
     it('throws an exception when invalid arguments and/or options are provided', () => {
-        expect(function () {
+        expect(() => {
             new SocketIOLoader(null, {});
         }).toThrowError('SocketIOLoader: `server` is required');
-        expect(function () {
+        expect(() => {
             new SocketIOLoader({}, {
                 main: [123]
             });
         }).toThrowError('SocketIOLoader: `options.main` must be a string');
-        expect(function () {
+        expect(() => {
             new SocketIOLoader({}, {
                 directories: ['a/directory', 5]
             });
@@ -64,7 +64,7 @@ describe('SocketIOLoader', () => {
     });
 
     it('does not throw if options are not provided', () => {
-        expect(function () {
+        expect(() => {
             new SocketIOLoader({});
         }).not.toThrow();
     });
