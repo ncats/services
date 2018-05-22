@@ -13,3 +13,4 @@ config.json
 sample-services.json
 sample-config.json
 greenkeeper.json
+commitlint.config.js
