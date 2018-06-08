@@ -55,7 +55,11 @@
     "proxyquire": "^2.0.1",
     "read-chunk": "^2.0.0",
     "supertest": "^3.1.0",
-    "temp": "^0.8.3"
+    "temp": "^0.8.3",
+    "@labshare/semantic-release-config": "^1.0.0"
   },
-  "snyk": true
+  "snyk": true,
+  "release": {
+    "extends": "@labshare/semantic-release-config"
+  }
 }
