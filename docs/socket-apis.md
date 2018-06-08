@@ -23,6 +23,7 @@ your project that export a `sockets` property.  The `sockets` value is an array 
 
 #### Stream type sockets also receive:
 
+| Name | Type | Description |
 | stream | Stream | A Duplex stream. See: [createStream()](https://www.npmjs.com/package/socket.io-stream#sscreatestreamoptions). |
 
 See: [socket.io-stream documentation](https://www.npmjs.com/package/socket.io-stream#documentation)
