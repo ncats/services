@@ -15,7 +15,9 @@
     "test": "jasmine JASMINE_CONFIG_PATH=./test/lib/jasmine.json",
     "coverage": "istanbul cover jasmine JASMINE_CONFIG_PATH=./test/lib/jasmine.json",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "travis-deploy-once": "travis-deploy-once --pro",
+    "semantic-release": "semantic-release"
   },
   "bugs": {
     "url": "https://github.com/LabShare/services/issues"
@@ -56,7 +58,9 @@
     "read-chunk": "^2.0.0",
     "supertest": "^3.1.0",
     "temp": "^0.8.3",
-    "@labshare/semantic-release-config": "^1.0.0"
+    "@labshare/semantic-release-config": "^1.0.0",
+    "travis-deploy-once": "^5.0.0",
+    "semantic-release": "^15.5.0"
   },
   "snyk": true,
   "release": {
