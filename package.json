@@ -65,5 +65,9 @@
   "snyk": true,
   "release": {
     "extends": "@labshare/semantic-release-config"
-  }
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "peerDependencies": {}
 }
