@@ -37,6 +37,7 @@
     "lodash": "^4.13.1",
     "morgan": "^1.7.0",
     "q": "^1.4.1",
+    "resolve-pkg": "^1.0.0",
     "revalidator": "^0.3.1",
     "server-shutdown": "^1.0.1",
     "snyk": "^1.69.1",
