@@ -1,11 +1,10 @@
 'use strict';
 
-const path = require('path'),
-    supertest = require('supertest'),
-    express = require('express'),
-    {Router} = express,
-    Q = require('q'),
-    _ = require('lodash');
+const path = require('path');
+const supertest = require('supertest');
+const express = require('express');
+const {Router} = express;
+const _ = require('lodash');
 
 function allArgs(spy) {
     return _.flatten(_.map(spy.calls.all(), 'args'));
@@ -76,13 +75,12 @@ describe('ApiLoader', () => {
 
     describe('when loading routes', () => {
 
-        it(`assigns all the valid package routes to the given router and runs the configuration functions
-            exposed by package API modules`, function (done) {
-           
+        it('assigns all the valid package routes to the given router and runs the configuration functions ' +
+            'exposed by package API modules', async () => {
             apiLoader.initialize();
-            apiLoader.setAPIs();           
+            apiLoader.setAPIs();
 
-            var promise = Q.all([
+            await Promise.all([
                 request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!'),
                 request.post('/api-package-1-namespace/123/_api/settings').expect(200),
                 request.post('/api-package-1-namespace/open').expect(200),
@@ -92,11 +90,9 @@ describe('ApiLoader', () => {
                 request.put('/api-package-2/list/mylist/items/123').expect(400),
                 request.delete('/api-package-2/list/mylist/items/123').expect(200)
             ]);
-
-            promise.then(done).catch(done.fail);
         });
 
-        it('calls the `config` functions specified by LabShare packages', done => {
+        it('calls the `config` functions specified by LabShare packages', async () => {
             apiLoader.initialize();
             apiLoader.setAPIs();
             apiLoader.setConfig({
@@ -104,7 +100,14 @@ describe('ApiLoader', () => {
             });
 
             // A route set up by the 'config' package API
-            request.get('/custom/api/route').expect(200).then(done).catch(done.fail);
+            await request.get('/custom/api/route').expect(200);
+        });
+
+        it('does not load APIs from "packageDependencies" recursively', async () => {
+            apiLoader.initialize();
+            apiLoader.setAPIs();
+
+            await request.get('/nested-api-package/nested/api').expect(404);
         });
 
         it('logs errors for invalid routes or duplicates', () => {
@@ -131,20 +134,20 @@ describe('ApiLoader', () => {
             }).toThrow();
         });
 
-        it('can load package APIs from directories specified by options.directories', function (done) {
+        it('can load package APIs from directories specified by options.directories', async () => {
             apiLoader = new ApiLoader(router, {
                 directories: [path.join(packagePath, 'node_modules', 'api-package1')]
             });
+
             apiLoader.initialize();
             apiLoader.setAPIs();
 
-            request.post(`${apiPackage1Prefix}/open`).expect(200)
-                .then(done)
-                .catch(done.fail);
+            await request.post(`${apiPackage1Prefix}/open`).expect(200);
         });
 
         it('does not store duplicate routers in the router', () => {
-            var apiPackage1Path = path.join(packagePath, 'node_modules', 'api-package1');
+            const apiPackage1Path = path.join(packagePath, 'node_modules', 'api-package1');
+
             apiLoader = new ApiLoader(router, {
                 directories: [apiPackage1Path, apiPackage1Path, apiPackage1Path]
             });

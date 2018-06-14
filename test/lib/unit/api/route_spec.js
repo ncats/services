@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path');
-
 describe('Route', () => {
 
     let Route,
