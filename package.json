@@ -16,7 +16,7 @@
     "coverage": "istanbul cover jasmine JASMINE_CONFIG_PATH=./test/lib/jasmine.json",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
-    "travis-deploy-once": "travis-deploy-once --pro",
+    "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release"
   },
   "bugs": {
