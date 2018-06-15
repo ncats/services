@@ -13,7 +13,8 @@
 const {Services} = require('@labshare/services');
 
 let options = {
-    // Override default options
+    // Override default options. 
+    // The available configuration options are described in the "Configuration" section below.
 };
 
 let services = new Services(options);
@@ -25,6 +26,11 @@ services.config(({app, services}) => {
 // Start up the server with all the loaded HTTP and Socket APIs
 services.start();
 ```
+
+## Configuration
+
+### [Configuring LabShare Services](docs/configuration.md)
+### [Environment Variables](docs/env-vars.md)
 
 ## HTTP Routes
 
@@ -61,11 +67,6 @@ HTML table with the HTTP routes of the provided project name.
 
 Example:
 http://localhost:8000/services/endpoints
-
-## Configuration
-
-### [Configuring LabShare Services](docs/configuration.md)
-### [Environment Variables](docs/env-vars.md)
 
 ## Working with LabShare APIs
 ### [Running APIs](docs/run-package.md)
