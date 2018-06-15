@@ -1,3 +1,22 @@
+# [3.0.0](https://github.com/LabShare/services/compare/v2.0.0...v3.0.0) (2018-06-15)
+
+
+### Bug Fixes
+
+* **package:** add missing semantic-release dependencies ([4023752](https://github.com/LabShare/services/commit/4023752))
+* **travis:** remove --pro flag to support open source Travis CI ([2d8d3d8](https://github.com/LabShare/services/commit/2d8d3d8))
+
+
+### Features
+
+* **api:** remove recursive dependency resolution SHELL-1402 ([beead4e](https://github.com/LabShare/services/commit/beead4e))
+* **npm:** integrate with semantic-release SHELL-1528 ([248fe9f](https://github.com/LabShare/services/commit/248fe9f))
+
+
+### BREAKING CHANGES
+
+* **api:** Remove recursive “packageDependency” resolution for HTTP and Web Socket APIs to resolve Node module versioning conflicts when multiple LabShare versions of LabShare dependencies exist in the dependency tree.
+
 # Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
