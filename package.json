@@ -40,7 +40,7 @@
     "resolve-pkg": "^1.0.0",
     "revalidator": "^0.3.1",
     "server-shutdown": "^1.0.1",
-    "snyk": "^1.69.1",
+    "snyk": "^1.87.0",
     "socket.io": "^2.0.2",
     "socket.io-client": "^2.0.2",
     "socket.io-stream": "^0.9.1"
