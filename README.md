@@ -22,6 +22,8 @@ let services = new Services(options);
 
 services.config(({app, services}) => {
    // Optionally perform additional customization of the Express app initialized by Services and the loaded routes
+   // Example (adds Express.js compression middleware):
+   app.use(compression());
 });
 
 // Start up the server with all the loaded HTTP and Socket APIs
@@ -33,7 +35,23 @@ services.start();
 ### [Configuring LabShare Services](docs/configuration.md)
 ### [Environment Variables](docs/env-vars.md)
 
-## HTTP Routes
+## LabShare Service Plugins
+
+* [services-auth](https://www.npmjs.com/package/@labshare/services-auth): OAuth2 API authorization plugin
+* [services-cache](https://www.npmjs.com/package/@labshare/services-cache): Enables Redis caching
+
+### Example plugin usage
+
+```js
+const {Services} = require('@labshare/services');
+const servicesAuth = require('@labshare/services-auth');
+
+const services = new Services({/* options */);
+
+services.config(servicesAuth({/* options */}));
+```
+
+## Default HTTP Routes
 
 ### Versions
 
