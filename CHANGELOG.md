@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/LabShare/services/compare/v3.0.0...v3.1.0) (2018-09-07)
+
+
+### Features
+
+* **docker:** install "tzdata" for customizing the timezone from UTC ([c5e748e](https://github.com/LabShare/services/commit/c5e748e)), closes [/github.com/gliderlabs/docker-alpine/issues/136#issuecomment-272703023](https://github.com//github.com/gliderlabs/docker-alpine/issues/136/issues/issuecomment-272703023)
+
 # [3.0.0](https://github.com/LabShare/services/compare/v2.0.0...v3.0.0) (2018-06-15)
 
 
