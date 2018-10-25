@@ -87,17 +87,6 @@ describe('Services', () => {
             .catch(done.fail);
     });
 
-    it('does not enable REST/Socket APIs if not configured', (done) => {
-        options.loadServices = false;
-
-        const services = new Services(options);
-        server = services.start();
-        const request = supertest(server);
-
-        request.get('/api-package-1-namespace/123/_api/hello')
-            .expect(404, done)
-    });
-
     it('supports Redis as a Session backing store', () => {
         options.security = {
             sessionOptions: {
