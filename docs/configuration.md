@@ -16,13 +16,13 @@ Default:
 }
 ```
 
-### ServicePath
+### restApiRoot
 
-The `ServicePath` is the mountpoint the HTTP APIs will be set on. Default: '/'.
+The `restApiRoot` is the mountpoint the HTTP APIs will be set on. Default: '/'.
 
 Example:
 ```json
-"ServicePath": "/_api"
+"restApiRoot": "/_api"
 ```
 
 ### Socket
