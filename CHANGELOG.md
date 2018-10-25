@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/LabShare/services/compare/v3.2.0...v3.2.1) (2018-10-25)
+
+
+### Bug Fixes
+
+* **config:** resolve default value for restApiRoot ([e47e807](https://github.com/LabShare/services/commit/e47e807))
+
 # [3.2.0](https://github.com/LabShare/services/compare/v3.1.0...v3.2.0) (2018-10-25)
 
 
