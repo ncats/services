@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/LabShare/services/compare/v3.1.0...v3.2.0) (2018-10-25)
+
+
+### Features
+
+* **config:** provide mountpoint for APIs as "restApiRoot" SHELL-1623 ([9d12f0b](https://github.com/LabShare/services/commit/9d12f0b))
+
 # [3.1.0](https://github.com/LabShare/services/compare/v3.0.0...v3.1.0) (2018-09-07)
 
 
