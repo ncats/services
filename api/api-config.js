@@ -1,7 +1,7 @@
 'use strict';
 
-const _ = require('lodash'),
-    cors = require('cors');
+const _ = require('lodash')
+const cors = require('cors')
 
 /**
  * @param versionDependencies An apps dependencies and information gathered from their package.json
@@ -64,7 +64,7 @@ function exposeEndPoints(routes, key) {
         if (!endpoint) {
             return;
         }
-        // console.log(endpoint, index);
+
         endPointTable += `<tr><td>${index}</td><td>${endpoint.httpMethod}</td><td>${endpoint.path}</td></tr>`;
     });
 
