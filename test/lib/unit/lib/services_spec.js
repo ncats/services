@@ -8,8 +8,8 @@ const supertest = require('supertest'),
 
 describe('Services', () => {
 
-    const packagesPath = './test/fixtures/main-package',
-        apiPackage1Prefix = '/socket-api-package-1-namespace';
+    const packagesPath = './test/fixtures/main-package'
+    const apiPackage1Prefix = '/socket-api-package-1-namespace'
 
     let services,
         port,
@@ -122,5 +122,22 @@ describe('Services', () => {
             services.start();
         }).toThrowError(/Session store "INVALID STORE" is not supported/i);
     });
+
+    it('sets a health check endpoint on the restApiRoot', (done) => {
+        const services = new Services(options);
+        server = services.start();
+
+        const request = supertest(server);
+
+        request
+            .get('/')
+            .expect(200)
+            .then((res) => {
+                expect(res.text).toContain('started');
+                expect(res.text).toContain('uptime');
+                done();
+            })
+            .catch(done.fail);
+    })
 
 });
