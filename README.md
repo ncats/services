@@ -40,6 +40,7 @@ services.start();
 * [services-auth](https://www.npmjs.com/package/@labshare/services-auth): OAuth2 API authorization plugin
 * [services-cache](https://www.npmjs.com/package/@labshare/services-cache): Enables Redis caching
 * [services-build-cli](https://www.npmjs.com/package/@labshare/services-build-cli): Generates API distributions
+* [services-msi-cli](https://www.npmjs.com/package/@labshare/services-msi-cli): Generates a Windows MSI for a Node.js API project
 
 ### Example plugin usage
 
