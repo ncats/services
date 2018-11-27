@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/LabShare/services/compare/v3.3.0...v3.3.1) (2018-11-27)
+
+
+### Bug Fixes
+
+* **package:** update server-shutdown to version 2.0.0 ([86bc672](https://github.com/LabShare/services/commit/86bc672))
+
 # [3.3.0](https://github.com/LabShare/services/compare/v3.2.1...v3.3.0) (2018-10-31)
 
 
