@@ -1,3 +1,11 @@
+## [3.3.2](https://github.com/LabShare/services/compare/v3.3.1...v3.3.2) (2018-11-27)
+
+
+### Bug Fixes
+
+* codacy issue ([586e018](https://github.com/LabShare/services/commit/586e018))
+* server-shutdown removal , stoppable used instead ([4ca10a3](https://github.com/LabShare/services/commit/4ca10a3))
+
 ## [3.3.1](https://github.com/LabShare/services/compare/v3.3.0...v3.3.1) (2018-11-27)
 
 
