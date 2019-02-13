@@ -1,3 +1,10 @@
+## [3.3.3](https://github.com/LabShare/services/compare/v3.3.2...v3.3.3) (2019-02-13)
+
+
+### Bug Fixes
+
+* **pkg:** use memorystore to prevent memory leaks in default session ([558f00d](https://github.com/LabShare/services/commit/558f00d))
+
 ## [3.3.2](https://github.com/LabShare/services/compare/v3.3.1...v3.3.2) (2018-11-27)
 
 
