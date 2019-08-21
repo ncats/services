@@ -115,7 +115,7 @@ Default:
 
 #### Elastic Application Performance Monitoring (APM)
 
-Configuration of the Elastic APM Node.js agent to connect to the APM server is controlled via environment variables. These variables are optional if Elastic APM is optional.
+Configuration of the Elastic APM Node.js agent to connect to the APM server is controlled via environment variables. These variables are optional if Elastic APM is not needed.
 
 | Environment Variable   | Value |
 | ------------- | ------------- |
