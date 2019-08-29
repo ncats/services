@@ -1,3 +1,15 @@
+# [3.4.0](https://github.com/LabShare/services/compare/v3.3.3...v3.4.0) (2019-08-29)
+
+
+### Bug Fixes
+
+* readme typo ([f62db6b](https://github.com/LabShare/services/commit/f62db6b))
+
+
+### Features
+
+* add Elastic APM integration ([86139d6](https://github.com/LabShare/services/commit/86139d6))
+
 ## [3.3.3](https://github.com/LabShare/services/compare/v3.3.2...v3.3.3) (2019-02-13)
 
 
