@@ -112,3 +112,13 @@ Default:
     }
 }
 ```
+
+#### Elastic Application Performance Monitoring (APM)
+
+Configuration of the Elastic APM Node.js agent to connect to the APM server is controlled via environment variables. These variables are optional if Elastic APM is not needed.
+
+| Environment Variable   | Value |
+| ------------- | ------------- |
+| ELASTIC_APM_SERVICE_NAME  | Default value is pulled from `name` field in package.json. Will need to be overridden for `@labshare` packages. |
+| ELASTIC_APM_SERVER_URL  | Url of Elastic APM server.  |
+| ELASTIC_APM_SECRET_TOKEN  | (Optional) Secret token for Elastic APM server. |
