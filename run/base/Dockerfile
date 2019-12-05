@@ -5,3 +5,9 @@ RUN apk update && apk upgrade && \
 
 # Add global node packages
 RUN npm i -g lsc
+
+COPY motd /etc/motd
+
+RUN echo '[ ! -z "$TERM" -a -r /etc/motd ] && cat /etc/motd' >> /root/.bashrc
+
+CMD ["exec","$@"]
