@@ -66,14 +66,10 @@
     "portfinder": "^1.0.10",
     "proxyquire": "^2.0.1",
     "read-chunk": "^3.0.0",
+    "semantic-release": "^15.5.4",
     "supertest": "^3.1.0",
     "temp": "^0.8.3",
-    "@labshare/semantic-release-config": "^1.0.0",
-    "travis-deploy-once": "^5.0.0",
-    "semantic-release": "^15.5.4"
+    "travis-deploy-once": "^5.0.0"
   },
-  "snyk": true,
-  "release": {
-    "extends": "@labshare/semantic-release-config"
-  }
+  "snyk": true
 }
