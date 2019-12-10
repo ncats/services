@@ -57,3 +57,30 @@ By default, the config function will be called with an object containing the fol
 | ---- | ---- | ----------- |
 | apiLoader | Object | A ApiLoader instance. It contains methods for assigning APIs and running global API config functions. |
 | app | Object | The Express router instance used by the LabShare `Services` class. |
+
+
+#### Security HTTP headers 
+Services API runner uses `helmet` package to set security HTTP headers. `helmet` provides some default setttings. To customize these settings you need to add or edit `services.security` element in the config file. For example: 
+
+```json
+{
+ 	"services": {
+		"security": {
+			"hsts": {
+				"maxAge": 31536000
+			},
+			"sessionOptions": {
+				"cookie": {
+					"httpOnly": true,
+					"maxAge": 31536000,
+					"secure": false
+				}
+			}
+		}
+	}
+}
+```
+
+See helmet [documentation](https://helmetjs.github.io/docs/) for further information. 
+
+
