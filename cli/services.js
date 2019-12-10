@@ -9,7 +9,6 @@ exports.usage = [
 ];
 exports.start = async function () {
     this.log.info('Starting LabShare services...');
-    debugger;
     const labShareConfig = utils.LabShareConfig.loadLabShareConfig();
     const lbOptions = require('config');
     const mode  =  _.get(labShareConfig, 'mode' , 'services');
