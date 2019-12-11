@@ -23,7 +23,7 @@ describe('lb Builder', () => {
           }
             let lbHelper = new LbBuilder(labshareRCMock , configMock);
             const newConfig = lbHelper.getDefaultConfig(configMock);
-            expect(newConfig.services.security).toBeDefined();
+            expect(newConfig.rest.security).toBeDefined();
     });
 
     it('lb builder building process', async () => { 

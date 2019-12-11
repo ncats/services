@@ -30,23 +30,34 @@ services.config(({app, services}) => {
 services.start();
 ```
 
-### Using as CLI with lb Architecture
+### Using as CLI with Loopback 4 Architecture
 `@labshare/services` is a package for loading APIs. These APIs can be single on multiple mounted over a single thread.
 This package supports 2 modes:
-- services: LabShare API Services Architecture.
-- lb: LabShare API LoopBack Support Architecture.
+| mode  |  reason  |
+|---|---|
+| services  | LabShare basic Express app with route loading architecture |
+| lb | LabShare API LoopBack support architecture. |
+
+This cli is using `@labshare/lsc` which is a cli bundler from the LabShare project , more information [here](https://github.com/labshare/lsc)
 
 This can be defined at the .labsharerc file ( if it is not present, it will use services mode).
 
 ```sh
 {
   "mode": "lb", // or services
-  "apis":[{"name":"api"}]
+  "apis":[{"name":"api"}] // array of loopback 4 apis 
 }
 
 ```
+### Configuration
 
-#### Services
+| configuration  |  reason  |
+|---|---|
+| config.json  | services configuration file |
+| config/ | configuration folder for Loopback 4 (lb) APIs |
+| .labsharec  |  @labshare/services module configuration  |
+
+#### services
 LabShare API Services Architecture can load both API modes, you will need to add the config.json configuration for services APIs and the config folder for lb APIs.
 The settings for starting the server will be taken from  the config.js configuration section `services.listen`
 The APIs that need to be loaded should be defined as package dependencies at the package.json
@@ -56,34 +67,42 @@ The APIs that need to be loaded should be defined as package dependencies at the
   ],
 Now you can start the app as lsc services start.
 #### lb
-LabShare API LoopBack Support Architecture will only load lb API mode.
+LabShare API LoopBack Support Architecture will only load loopback 4 APIs.
 In order to use it you will need to have the following configuration:
 npm i @labshare/services  at the host project
 add a .labsharerc file with the following configuration
 ```sh
 {
   "mode": "lb",
-  "apis":[{"name":"api" , packare:"@labshare/facility-api" , configAlias:"facility"}]
+  "apis":[{"name":"api" , package:"@labshare/facility-api" , configAlias:"facility"}]
 }
 
 ```
  
 Where:
-- mode: it sets the mode to lb
-- apis: an array of APIs that will be loaded thru @labshare/services
+| key  |  value  |
+|---|---|
+| mode  |  it sets the mode to lb. |
+| apis  |  an array of APIs that will be loaded thru @labshare/services . |
+
 Each of the APIs will have the following configuration:
 
-- name: API name - it will be the use for retrieving the API configuration.
-- packare: npm package that will contain the API, if it is not defined it will load the local's project API.
-- configAlias: if defined it will load the API configuration with the given value.
+| key  |  value  |
+|---|---|
+| name  |  API name - it will be the use for retrieving the API configuration.|
+| package  |  npm package that will contain the API, if it is not defined it will load the host's project loopback 4 API. |
+| configAlias  | if defined it will load the API configuration with the given value. |
 
 The lb API project should have:
 a config folder, this will need to have the API configuration, for example:
-```sh
-API - logging API
-name: logging
-package: @labshare/logging-api
-```
+The following application it is called @labshare/logging-api
+The configuration values are:
+| key  |  value  | reason  |
+|---|---|---|
+| name  |  logging| it will try to look for the logging name at the configuration|
+| package  |  | it will use the current project's APPI |
+| configAlias  |  | it does not need to use configAlias|
+
 ```sh
 module.exports = {
   rest: {
@@ -101,8 +120,12 @@ module.exports = {
 };
 ```
 Where 
-- rest : will be the loading configuration for the apis. [Click](https://loopback.io/doc/en/lb4/Server.html#rest-options) here more information:
-- logging: the api name
+
+| key  |  value  |
+|---|---|
+| rest  | will be the loading configuration for the apis. [Click](https://loopback.io/doc/en/lb4/Server.html#rest-options) here more information:  |
+| logging  |  the api name at the configuration |
+| index.ts  | main application's index file |
 
 At the index.ts file inside src you will need to export the API application as app:
 
@@ -114,15 +137,19 @@ export {app};
 Now you can start the app as lsc services start.
 
 #### lb Configuration:
+
+The following are the custom configuration settings that can be added to Loopback's 4 rest settings for the services project.
+
 ```sh
 
 
-            services: {
+            rest: {
+                .... 
                 morgan: { . // enable or disables morgan for logging the API
                     enable: true,
                     format: 'dev', // combined for production
                 },
-                bodyParser: { // body Parser
+                requestBodyParser: { // body Parser
                     json: {},
                     urlencoded: {
                         extended: true

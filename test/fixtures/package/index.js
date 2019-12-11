@@ -5,5 +5,6 @@ module.exports ={
         function boot(){
 
         }
+        function start(){}
     }
 }

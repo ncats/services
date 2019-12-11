@@ -8,11 +8,14 @@ class app{
     boot(){
 
     }
+    start(){
+        
+    }
     requestHandler(req,res,next){
        return express.Router();
     }
 }
 
 module.exports ={
-    app:app
+    app
 }
