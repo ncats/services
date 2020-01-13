@@ -24,6 +24,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@labshare/lb4-legacy-loader": "1.12.1",
     "async": "^2.1.4",
     "body-parser": "^1.18.3",
     "connect-redis": "^3.2.0",

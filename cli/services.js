@@ -8,11 +8,11 @@ exports.usage = [
     ''
 ];
 
-exports.start = function () {
+exports.start = async function () {
     this.log.info('Starting LabShare services...');
 
     let options = _.get(global.LabShare, 'Config.services'),
         services = new Services(options);
 
-    services.start();
+    await services.start();
 };
