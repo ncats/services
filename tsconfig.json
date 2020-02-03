@@ -4,9 +4,8 @@
   "compilerOptions": {
       "experimentalDecorators": true,
     "incremental": false,
-    "rootDir": "lib/loopback-proxy-app"
   },
   "include": [
-    "lib/loopback-proxy-app"
+    "lib/loopback-proxy-app", "test/lib/unit/lib/loopback-proxy-app"
   ]
 }

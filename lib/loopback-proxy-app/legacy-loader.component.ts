@@ -11,46 +11,52 @@ import {MetadataAccessor, MetadataMap} from '@loopback/metadata';
 import * as async from 'async';
 import * as util from 'util';
 import * as resolve from 'resolve-pkg';
+import * as VError from 'verror';
+import {createVersionsController} from './versions.controller';
 
 const servicesAuth = require('@labshare/services-auth');
 
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
 const PATH_PARAMS_REGEX = /[\/?]:(.*?)(?![^\/])/g;
 
-const options = {
-  pattern: 'api/*.js',
-  directory: process.cwd()
-};
-
 export class LegacyLoaderComponent implements Component {
+
   authUrl: string;
   authTenant: string;
   authAudience: string;
+  packageManifests: any[] = [];
+  mainDir: string;
+  apiFilePattern: string;
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: Application) {
     const config = this.application.options;
+    this.mainDir = _.get(config, 'services.main', process.cwd());
+    this.apiFilePattern = _.get(config, 'services.pattern', '{src/api,api}/*.js');
     this.authTenant = _.get(config, 'services.auth.tenant') || _.get(config, 'services.auth.organization') || 'ls';
     this.authUrl = _.get(config, 'facility.shell.Auth.Url') || _.get(config, 'auth.url') || 'https://a.labshare.org/_api';
     this.authAudience = _.get(config, 'services.auth.audience') || 'ls-api';
-
-    const manifest = getPackageManifest(options.directory);
+    const manifest = getPackageManifest(this.mainDir);
+    this.packageManifests.push(manifest);
     const packageDependencies = getPackageDependencies(manifest);
 
     // mount legacy API routes from the current module
-    this.mountLegacyApiDirectory(this.application, options.directory);
+    this.mountLegacyApiDirectory(this.application, this.mainDir);
 
     // mount legacy API routes from package dependencies
     for (const dependency of packageDependencies) {
-      const dependencyPath = resolve(dependency, {cwd: options.directory});
+      const dependencyPath = resolve(dependency, {cwd: this.mainDir});
       if (!dependencyPath) {
-        throw new Error(`Dependency: "${dependency}" required by "${options.directory}" could not be found. Is it installed?`);
+        throw new Error(`Dependency: "${dependency}" required by "${this.mainDir}" could not be found. Is it installed?`);
       }
       this.mountLegacyApiDirectory(this.application, dependencyPath);
     }
+    // add controller for package versions
+    const versionsController = createVersionsController(this.packageManifests);
+    this.application.controller(versionsController);
   }
 
   private mountLegacyApiDirectory(application: Application, directory: string) {
-    const serviceModulePaths = glob.sync(options.pattern, {cwd: directory}).map(file => {
+    const serviceModulePaths = glob.sync(this.apiFilePattern, {cwd: directory}).map(file => {
       return path.resolve(directory, file);
     });
 
@@ -58,6 +64,7 @@ export class LegacyLoaderComponent implements Component {
     if (!manifest) {
       return;
     }
+    this.packageManifests.push(manifest);
     const packageName = getPackageName(manifest);
 
     const serviceRoutes = getServiceRoutes(serviceModulePaths);
@@ -71,34 +78,47 @@ export class LegacyLoaderComponent implements Component {
       const pathsSpecs: PathsObject = {}; // LB4 object to add to class to specify route / handler mapping
       // loop over routes defined in the module
       for (const route of routes) {
-        const handlerName =
-          route.httpMethod.toLowerCase() +
-          route.path
-            .replace(/\/:/g, '_')
-            .replace(/\//g, '_')
-            .replace('?', '');
-        middlewareFunctions[handlerName] = route.middleware;
-        if (packageName === 'facility') {
-          route.path = `/:facilityId/${packageName}${route.path}`;
-        } else {
-          route.path = `/${packageName}${route.path}`;
+        try {
+          const httpMethods = _.isArray(route.httpMethod) ? route.httpMethod : [route.httpMethod];
+          for (const httpMethod of httpMethods) {
+            const handlerName =
+              httpMethod.toLowerCase() +
+              route.path
+                .replace(/\/:/g, '_')
+                .replace(/\//g, '_')
+                .replace(/-/g, '_')
+                .replace('?', '');
+            middlewareFunctions[handlerName] = route.middleware;
+            if (packageName === 'facility') {
+              route.path = `/:facilityId/${packageName}${route.path}`;
+            } else {
+              route.path = `/${packageName}${route.path}`;
+            }
+            appendPath(pathsSpecs, route, controllerClassName, handlerName);
+          }
+        } catch (err) {
+          throw new VError(err, `Error loading route ${JSON.stringify(route.httpMethod)} : ${route.path}.`);
         }
-        appendPath(pathsSpecs, route, controllerClassName, handlerName);
       }
-      const controllerSpecs: RouterSpec = {paths: pathsSpecs};
-      const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middlewareFunctions));
-      const defineNewController = new Function('middlewareRunner', 'middlewareFunctions', controllerClassDefinition);
-      const controllerClass = defineNewController(middlewareRunnerPromise, middlewareFunctions);
+      try {
+        const controllerSpecs: RouterSpec = {paths: pathsSpecs};
+        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middlewareFunctions));
+        const defineNewController = new Function('middlewareRunner', 'middlewareFunctions', controllerClassDefinition);
+        const controllerClass = defineNewController(middlewareRunnerPromise, middlewareFunctions);
 
-      // Add metadata for mapping HTTP routes to controller class functions
-      MetadataInspector.defineMetadata(OAI3Keys.CONTROLLER_SPEC_KEY.key, controllerSpecs, controllerClass);
+        // Add metadata for mapping HTTP routes to controller class functions
+        MetadataInspector.defineMetadata(OAI3Keys.CONTROLLER_SPEC_KEY.key, controllerSpecs, controllerClass);
 
-      const injectionSpecs = getControllerInjectionSpecs(controllerClass);
-      // Add metadata for injecting HTTP Request and Response objects into controller class
-      MetadataInspector.defineMetadata<MetadataMap<Readonly<Injection>[]>>(METHODS_KEY, injectionSpecs, controllerClass);
+        const injectionSpecs = getControllerInjectionSpecs(controllerClass);
+        // Add metadata for injecting HTTP Request and Response objects into controller class
+        MetadataInspector.defineMetadata<MetadataMap<Readonly<Injection>[]>>(METHODS_KEY, injectionSpecs, controllerClass);
 
-      // add controller to the LB4 application
-      application.controller(controllerClass);
+        // add controller to the LB4 application
+        application.controller(controllerClass);
+      }
+      catch (err) {
+        throw new VError(err, `Error registering module ${service} as LoopBack controller.`);
+      }
     }
   }
 
@@ -207,7 +227,6 @@ function appendPath(pathsObject: PathsObject, route: LegacyRoute, controllerName
     return `/{${_.trimStart(substring.replace('?', ''), '/:')}}`;
   });
   let pathObject: PathObject;
-  const method = route.httpMethod.toLowerCase();
   if (!pathsObject[lb4Path]) {
     pathObject = {};
     pathsObject[lb4Path] = pathObject;
@@ -215,15 +234,18 @@ function appendPath(pathsObject: PathsObject, route: LegacyRoute, controllerName
     pathObject = pathsObject[lb4Path];
   }
 
-  pathObject[method] = {
-    responses: {},
-    'x-operation-name': handlerName,
-    'x-controller-name': controllerName,
-    operationId: `${controllerName}.${handlerName}`
-  };
-  const params = getPathParams(route.path);
-  if (!_.isEmpty(params)) {
-    pathObject[method].parameters = params;
+  const httpMethods = _.isArray(route.httpMethod) ? route.httpMethod : [route.httpMethod];
+  for (const httpMethod of httpMethods) {
+    pathObject[httpMethod] = {
+      responses: {},
+      'x-operation-name': handlerName,
+      'x-controller-name': controllerName,
+      operationId: `${controllerName}.${handlerName}`
+    };
+    const params = getPathParams(route.path);
+    if (!_.isEmpty(params)) {
+      pathObject[httpMethod].parameters = params;
+    }
   }
 }
 

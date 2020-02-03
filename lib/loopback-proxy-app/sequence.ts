@@ -5,6 +5,7 @@
 
 import {Context, inject} from '@loopback/context';
 import {FindRoute, InvokeMethod, ParseParams, Reject, RequestContext, RestBindings, Send, SequenceHandler} from '@loopback/rest';
+import {LabShareLogger, LogBindings} from '@labshare/services-logger';
 
 const SequenceActions = RestBindings.SequenceActions;
 
@@ -16,17 +17,21 @@ export class MySequence implements SequenceHandler {
     @inject(SequenceActions.INVOKE_METHOD) protected invoke: InvokeMethod,
     @inject(SequenceActions.SEND) public send: Send,
     @inject(SequenceActions.REJECT) public reject: Reject,
+    @inject(LogBindings.LOGGER) protected logger: LabShareLogger
   ) {}
 
   async handle(context: RequestContext) {
+    const {request, response} = context;
     try {
-      const {request, response} = context;
       const route = this.findRoute(request);
       request.params = route.pathParams;
       const args = await this.parseParams(request, route);
       const result = await this.invoke(route, args);
       this.send(response, result);
     } catch (error) {
+      this.logger.error(request.url, error.stack, {
+        url: request.url
+      });
       this.reject(context, error);
     }
   }

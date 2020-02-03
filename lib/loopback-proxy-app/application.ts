@@ -7,7 +7,7 @@ import * as path from 'path';
 import {MySequence} from './sequence';
 import {LegacyLoaderComponent} from './legacy-loader.component';
 import {HealthComponent} from '@labshare/services-health';
-
+import {ServicesLoggerComponent} from '@labshare/services-logger';
 
 export class LoopbackProxyApplication extends BootMixin(RepositoryMixin(RestApplication)) {
   constructor(options: ApplicationConfig = {}) {
@@ -22,6 +22,7 @@ export class LoopbackProxyApplication extends BootMixin(RepositoryMixin(RestAppl
     this.component(RestExplorerComponent);
 
     this.projectRoot = __dirname;
+    this.component(ServicesLoggerComponent);
     this.component(HealthComponent);
     this.component(LegacyLoaderComponent);
   }

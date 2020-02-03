@@ -54,6 +54,7 @@ dist
 # NPM
 package-lock.json
 
-lib/loopback-proxy-app/*.js
-lib/loopback-proxy-app/*.js.map
-lib/loopback-proxy-app/*.d.ts
+**/loopback-proxy-app/*.js
+**/loopback-proxy-app/*.js.map
+**/loopback-proxy-app/*.d.ts
+

@@ -1,10 +1,10 @@
 {
   "name": "main-package",
   "version": "0.0.1",
+  "main": "index.js",
   "packageDependencies": [
     "api-package1",
     "api-package2",
-    "invalid-api-package",
     "socket-api-package1"
   ]
 }
