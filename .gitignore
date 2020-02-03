@@ -51,11 +51,6 @@ bower_components
 # Releases
 dist
 
-# NPM
-package-lock.json
-
 **/loopback-proxy-app/*.js
 **/loopback-proxy-app/*.js.map
 **/loopback-proxy-app/*.d.ts
-
-
