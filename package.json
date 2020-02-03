@@ -48,7 +48,7 @@
     "express": "^4.13.4",
     "express-session": "^1.14.1",
     "glob": "^7.0.3",
-    "helmet": "^3.3.0jasm,",
+    "helmet": "^3.3.0",
     "lodash": "^4.13.1",
     "loopback-connector-rest": "^3.6.0",
     "memorystore": "^1.6.0",
