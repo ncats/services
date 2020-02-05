@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "@loopback/build/config/tsconfig.common.json",
+  "compilerOptions": {
+      "experimentalDecorators": true,
+    "incremental": false,
+  },
+  "include": [
+    "lib/loopback-proxy-app", "test/lib/unit/lib/loopback-proxy-app"
+  ]
+}
