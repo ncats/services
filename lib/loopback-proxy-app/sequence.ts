@@ -9,7 +9,7 @@ import {LabShareLogger, LogBindings} from '@labshare/services-logger';
 
 const SequenceActions = RestBindings.SequenceActions;
 
-export class MySequence implements SequenceHandler {
+export class LabShareSequence implements SequenceHandler {
   constructor(
     @inject(RestBindings.Http.CONTEXT) public ctx: Context,
     @inject(SequenceActions.FIND_ROUTE) protected findRoute: FindRoute,

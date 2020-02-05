@@ -9,7 +9,6 @@ describe('Loopback Proxy App', () => {
     lb4ProxyApp,
     request: supertest.SuperTest<supertest.Test>;
   beforeAll(async () => {
-    // const pkg = require('/Users/dmitry/GitRepos/services/test/fixtures/main-package');
     const config = {
       services: {
         main: `${process.cwd()}/test/fixtures/main-package`
