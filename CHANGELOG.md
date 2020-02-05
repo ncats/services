@@ -125,3 +125,4 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 * **services:** Replace custom forced shutdown with NPM's server-shutdown ([3175c53](https://github.com/LabShare/services/commit/3175c53))
+
