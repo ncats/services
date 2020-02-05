@@ -74,20 +74,19 @@ __Response__
 Example:
 http://localhost:8000/versions
 
-### Endpoints
+### API Explorer
 
 ```
-GET /<service-path>/<project-name>/endpoints
-POST /<service-path>/<project-name>/endpoints
+GET /<service-path>/explorer
 ```
 
 __Response__
 ```
-HTML table with the HTTP routes of the provided project name.
+Swagger HTML page providing documentation for endpoints across all API packages
 ```
 
 Example:
-http://localhost:8000/services/endpoints
+http://localhost:8000/explorer
 
 ## Working with LabShare APIs
 ### [Running APIs](docs/run-package.md)
@@ -102,3 +101,5 @@ http://localhost:8000/services/endpoints
 
 ### Tests
 `npm test`
+
+[![LoopBack](<https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png>)](http://loopback.io/)
