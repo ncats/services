@@ -69,7 +69,18 @@ describe('Services', () => {
         expect(data.headers['x-xss-protection']).toBe('1; mode=block');
    });
 
-    it('supports Redis as a Session backing store', () => {
+   it('provides status endpoint', async () => {
+     services.config(({app}) => {
+       expect(app).toBeDefined();
+     });
+     server = await services.start();
+     let request = supertest(server);
+     const res = await request.get('/');
+     expect(res.text).toContain('started');
+     expect(res.text).toContain('uptime');
+   });
+
+   it('supports Redis as a Session backing store', () => {
         options.services.security = {
             sessionOptions: {
                 store: 'connect-redis'
