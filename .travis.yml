@@ -33,5 +33,5 @@ jobs:
         - npm run build
       deploy:
         provider: script
-        cleanup: true
-        script: npx semantic-release
+        cleanup: false
+        script: npm run semantic-release
