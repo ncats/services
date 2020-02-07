@@ -159,7 +159,7 @@ function getServiceRoutes(serviceModulePaths: string[]) {
         if (!matches) {
           throw new Error(`Could not determine service name for module ${value}.`);
         }
-        serviceName = _.capitalize(matches[0]);
+        serviceName = _.startCase(matches[0]).replace(/ /g, '');
       }
       result[serviceName] = routes;
       return result;
