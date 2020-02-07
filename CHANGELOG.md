@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/LabShare/services/compare/v4.0.1...v4.0.2) (2020-02-07)
+
+
+### Bug Fixes
+
+* dashes in API file names ([da13376](https://github.com/LabShare/services/commit/da133760abe0a7620dc1f4f561199eeddc07eceb))
+
 # [3.4.0](https://github.com/LabShare/services/compare/v3.3.3...v3.4.0) (2019-08-29)
 
 
@@ -125,4 +132,3 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 * **services:** Replace custom forced shutdown with NPM's server-shutdown ([3175c53](https://github.com/LabShare/services/commit/3175c53))
-
