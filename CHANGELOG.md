@@ -1,3 +1,13 @@
+## [3.4.2](https://github.com/LabShare/services/compare/v3.4.1...v3.4.2) (2020-02-10)
+
+
+### Bug Fixes
+
+* move apm.start after loading from .env file ([786fcd8](https://github.com/LabShare/services/commit/786fcd8df2e9333f39f348cbc68611b191f82081))
+* only start APM if ELASTIC_APM_SERVER_URL is configured ([069da26](https://github.com/LabShare/services/commit/069da2627743ca2d586bf575a84256548dcf2aab))
+* version 3x release ([0545e77](https://github.com/LabShare/services/commit/0545e77e011849e0249e14cf4d5fb9bbd2761fb2))
+* version 3x release ([a671521](https://github.com/LabShare/services/commit/a671521b3c7001884f0ce809d66b64949259ffa3))
+
 # [3.4.0](https://github.com/LabShare/services/compare/v3.3.3...v3.4.0) (2019-08-29)
 
 

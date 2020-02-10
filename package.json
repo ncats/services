@@ -2,7 +2,7 @@
   "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "3.4.0",
+  "version": "3.4.2",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
@@ -78,7 +78,9 @@
       "@semantic-release/npm",
       "@semantic-release/git"
     ],
-    "branches": ["3x"]
+    "branches": [
+      "3x"
+    ]
   },
   "snyk": true
 }
