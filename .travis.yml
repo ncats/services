@@ -9,14 +9,21 @@ script:
   - npm run coverage
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - codecov
-cache:
-  directories:
-    - ~/.npm
-    - node_modules
 notifications:
   email: false
-after_success:
-  - npm run semantic-release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
+jobs:
+  include:
+    - stage: release
+      if: branch = 3x
+      node_js: lts/*
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npm run semantic-release
+        on:
+          branch: 3x
