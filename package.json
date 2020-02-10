@@ -78,10 +78,7 @@
       "@semantic-release/npm",
       "@semantic-release/git"
     ],
-    "branches": [
-      "master",
-      "3x"
-    ]
+    "branches": ["3x"]
   },
   "snyk": true
 }
