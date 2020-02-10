@@ -59,10 +59,26 @@
     "portfinder": "^1.0.10",
     "proxyquire": "^2.0.1",
     "read-chunk": "^3.0.0",
-    "semantic-release": "^15.5.4",
+    "semantic-release": "^17.0.2",
+    "@semantic-release/changelog": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
     "supertest": "^3.1.0",
     "temp": "^0.8.3",
     "travis-deploy-once": "^5.0.0"
+  },
+  "release": {
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "branches": ["3x"]
   },
   "snyk": true
 }
