@@ -1,3 +1,10 @@
+## [4.0.3](https://github.com/LabShare/services/compare/v4.0.2...v4.0.3) (2020-02-13)
+
+
+### Bug Fixes
+
+* prefix each path with facilityId ([b9f5741](https://github.com/LabShare/services/commit/b9f57415af97c63425f9852d2a9cae019ce197cc))
+
 ## [4.0.2](https://github.com/LabShare/services/compare/v4.0.1...v4.0.2) (2020-02-07)
 
 
