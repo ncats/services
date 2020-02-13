@@ -1,3 +1,10 @@
+## [4.0.4](https://github.com/LabShare/services/compare/v4.0.3...v4.0.4) (2020-02-13)
+
+
+### Bug Fixes
+
+* force routes to be lower case ([2a5bbcf](https://github.com/LabShare/services/commit/2a5bbcfa32bcd9bd5075fe8b5888a0efde6af909))
+
 ## [4.0.3](https://github.com/LabShare/services/compare/v4.0.2...v4.0.3) (2020-02-13)
 
 
