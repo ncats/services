@@ -60,7 +60,7 @@ describe('Services', () => {
 
         let request = supertest(server)
 
-        const data = await request.get('/api-package-1-namespace/123/_api/hello')
+        const data = await request.get('/test-facility/api-package-1-namespace/123/_api/hello')
             .expect(200, 'Hello World!');
         // Check default security headers
         expect(data.headers['x-powered-by']).toBeUndefined();

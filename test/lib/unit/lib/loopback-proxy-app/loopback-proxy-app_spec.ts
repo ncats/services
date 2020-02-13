@@ -45,18 +45,18 @@ describe('Loopback Proxy App', () => {
   });
 
   it('exposes all the valid package routes defined by package API modules', async () => {
-    await request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!');
-    await request.post('/api-package-1-namespace/123/_api/settings').expect(200);
-    await request.post('/api-package-1-namespace/open').expect(200);
-    await request.options('/api-package-2/list/mylist/items').expect(204);
-    await request.post('/api-package-2/list/mylist/items').expect(200);
-    await request.get('/api-package-2/list/mylist/items/123').expect(200);
-    await request.put('/api-package-2/list/mylist/items/123').expect(400);
-    await request.delete('/api-package-2/list/mylist/items/123').expect(200);
+    await request.get('/test-facility/api-package-1-namespace/123/_api/hello').expect('Hello World!');
+    await request.post('/test-facility/api-package-1-namespace/123/_api/settings').expect(200);
+    await request.post('/test-facility/api-package-1-namespace/open').expect(200);
+    await request.options('/test-facility/api-package-2/list/mylist/items').expect(204);
+    await request.post('/test-facility/api-package-2/list/mylist/items').expect(200);
+    await request.get('/test-facility/api-package-2/list/mylist/items/123').expect(200);
+    await request.put('/test-facility/api-package-2/list/mylist/items/123').expect(400);
+    await request.delete('/test-facility/api-package-2/list/mylist/items/123').expect(200);
   });
 
   it('does not load APIs from "packageDependencies" recursively', async () => {
-    await request.get('/nested-api-package/nested/api').expect(404);
+    await request.get('/test-facility/nested-api-package/nested/api').expect(404);
   });
 });
 
