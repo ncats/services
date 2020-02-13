@@ -89,11 +89,8 @@ export class LegacyLoaderComponent implements Component {
                 .replace(/-/g, '_')
                 .replace('?', '');
             middlewareFunctions[handlerName] = route.middleware;
-            if (packageName === 'facility') {
-              route.path = `/:facilityId/${packageName}${route.path}`;
-            } else {
-              route.path = `/${packageName}${route.path}`;
-            }
+            // prefix each path with :facilityId
+            route.path = `/:facilityId/${packageName}${route.path}`;
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
           }
         } catch (err) {
