@@ -55,6 +55,10 @@ describe('Loopback Proxy App', () => {
     await request.delete('/test-facility/api-package-2/list/mylist/items/123').expect(200);
   });
 
+  it('should provide case insensitive routing', async () => {
+    await request.get('/test-facility/api-package-1-namespace/123/_api/HellO').expect('Hello World!');
+  });
+
   it('does not load APIs from "packageDependencies" recursively', async () => {
     await request.get('/test-facility/nested-api-package/nested/api').expect(404);
   });
