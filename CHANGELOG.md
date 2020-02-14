@@ -1,3 +1,10 @@
+## [4.0.6](https://github.com/LabShare/services/compare/v4.0.5...v4.0.6) (2020-02-14)
+
+
+### Bug Fixes
+
+* implement case-insensitive routing ([54168b7](https://github.com/LabShare/services/commit/54168b7484f4fcb9472159e58183584ea2d0f09a))
+
 ## [4.0.5](https://github.com/LabShare/services/compare/v4.0.4...v4.0.5) (2020-02-13)
 
 
