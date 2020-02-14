@@ -23,6 +23,7 @@ export class LabShareSequence implements SequenceHandler {
   async handle(context: RequestContext) {
     const {request, response} = context;
     try {
+      request.url = this.pathToLowerCase(request.url);
       const route = this.findRoute(request);
       request.params = route.pathParams;
       const args = await this.parseParams(request, route);
@@ -34,5 +35,15 @@ export class LabShareSequence implements SequenceHandler {
       });
       this.reject(context, error);
     }
+  }
+
+  /**
+   * Converts path of a URL to lowercase while leaving original casing for query string
+   * @param url
+   */
+  private pathToLowerCase(url: string): string {
+    const urlParts = url.split('?');
+    urlParts[0] = urlParts[0].toLowerCase();
+    return urlParts.join('?');
   }
 }
