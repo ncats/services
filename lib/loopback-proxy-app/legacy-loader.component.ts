@@ -27,14 +27,16 @@ export class LegacyLoaderComponent implements Component {
   packageManifests: any[] = [];
   mainDir: string;
   apiFilePattern: string;
+  mountPath: string;
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: Application) {
     const config = this.application.options;
-    this.mainDir = _.get(config, 'services.main', process.cwd());
-    this.apiFilePattern = _.get(config, 'services.pattern', '{src/api,api}/*.js');
-    this.authTenant = _.get(config, 'services.auth.tenant') || _.get(config, 'services.auth.organization') || 'ls';
-    this.authUrl = _.get(config, 'facility.shell.Auth.Url') || _.get(config, 'auth.url') || 'https://a.labshare.org/_api';
-    this.authAudience = _.get(config, 'services.auth.audience') || 'ls-api';
+    this.mainDir = config?.services?.main || process.cwd();
+    this.apiFilePattern = config?.services?.pattern || '{src/api,api}/*.js';
+    this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
+    this.authUrl = config?.facility?.shell?.Auth?.Url || config?.auth?.url || 'https://a.labshare.org/_api';
+    this.authAudience = config?.services?.auth?.audience || 'ls-api';
+    this.mountPath = config?.services?.mountPath || '';
     const manifest = getPackageManifest(this.mainDir);
     this.packageManifests.push(manifest);
     const packageDependencies = getPackageDependencies(manifest);
@@ -89,8 +91,8 @@ export class LegacyLoaderComponent implements Component {
                 .replace(/-/g, '_')
                 .replace('?', '');
             middlewareFunctions[handlerName] = route.middleware;
-            // prefix each path with :facilityId
-            route.path = `/:facilityId/${packageName}${route.path}`.toLowerCase();
+            // prefix each path with mount path
+            route.path = `${this.mountPath}/${packageName}${route.path}`.toLowerCase();
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
           }
         } catch (err) {
@@ -320,7 +322,7 @@ function getPackageName(manifest: any) {
  * @returns {Array} A list of LabShare package dependencies or an empty array
  */
 function getPackageDependencies(manifest: any) {
-  const dependencies = _.get(manifest, 'packageDependencies', []);
+  const dependencies = manifest?.packageDependencies || [];
   if (_.isArray(dependencies)) {
     return dependencies;
   }

@@ -5,13 +5,14 @@ const express = require('express');
 const {LoopbackProxyApplication} = require('../../../../../lib/loopback-proxy-app');
 
 describe('Loopback Proxy App', () => {
-  let expressApp,
-    lb4ProxyApp,
+  let expressApp: { use: (arg0: any) => void; },
+    lb4ProxyApp: { requestHandler: any; boot: () => any; start: () => any; stop: () => any; close: () => any;},
     request: supertest.SuperTest<supertest.Test>;
-  beforeAll(async () => {
+  beforeEach(async () => {
     const config = {
       services: {
-        main: `${process.cwd()}/test/fixtures/main-package`
+        main: `${process.cwd()}/test/fixtures/main-package`,
+        mountPath: '/:facilityId'
       }
     };
     expressApp = express();
@@ -20,6 +21,11 @@ describe('Loopback Proxy App', () => {
     await lb4ProxyApp.boot();
     await lb4ProxyApp.start();
     request = supertest(expressApp);
+  });
+
+  afterEach(async () => {
+    await lb4ProxyApp.stop();
+    await lb4ProxyApp.close();
   });
 
   it('should expose /versions route', async () => {
@@ -52,7 +58,7 @@ describe('Loopback Proxy App', () => {
     await request.post('/test-facility/api-package-2/list/mylist/items').expect(200);
     await request.get('/test-facility/api-package-2/list/mylist/items/123').expect(200);
     await request.put('/test-facility/api-package-2/list/mylist/items/123').expect(400);
-    await request.delete('/test-facility/api-package-2/list/mylist/items/123').expect(200);
+    await request.delete('/test-facility/api-package-2/list/mylist/items/1k423').expect(200);
   });
 
   it('should provide case insensitive routing', async () => {
@@ -61,6 +67,43 @@ describe('Loopback Proxy App', () => {
 
   it('does not load APIs from "packageDependencies" recursively', async () => {
     await request.get('/test-facility/nested-api-package/nested/api').expect(404);
+  });
+
+  it('mounts API at specified mountPath', async () => {
+    const config = {
+      services: {
+        main: `${process.cwd()}/test/fixtures/main-package`,
+        mountPath: '/someBasePath'
+      }
+    };
+    const lb4App = new LoopbackProxyApplication(config);
+    // @ts-ignore
+    expressApp._router = undefined;  // clear all previously defined routes
+    expressApp.use(lb4App.requestHandler);
+    await lb4App.boot();
+    await request.get('/someBasePath/api-package-1-namespace/123/_api/hello').expect('Hello World!');
+  });
+
+  it('mounts API at root if mountPath is not set', async () => {
+    const config = {
+      services: {
+        main: `${process.cwd()}/test/fixtures/main-package`,
+        pattern: '{src/api,api}/*.js',
+        auth: {
+          tenant: 'ls',
+          audience: 'ls-api'
+        }
+      },
+      auth: {
+        url: 'https://a.labshare.org/_api'
+      }
+    };
+    const lb4App = new LoopbackProxyApplication(config);
+    // @ts-ignore
+    expressApp._router = undefined;  // clear all previously defined routes
+    expressApp.use(lb4App.requestHandler);
+    await lb4App.boot();
+    await request.get('/api-package-1-namespace/123/_api/hello').expect('Hello World!');
   });
 });
 
