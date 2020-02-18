@@ -31,12 +31,12 @@ export class LegacyLoaderComponent implements Component {
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: Application) {
     const config = this.application.options;
-    this.mainDir = _.get(config, 'services.main', process.cwd());
-    this.apiFilePattern = _.get(config, 'services.pattern', '{src/api,api}/*.js');
-    this.authTenant = _.get(config, 'services.auth.tenant') || _.get(config, 'services.auth.organization') || 'ls';
-    this.authUrl = _.get(config, 'facility.shell.Auth.Url') || _.get(config, 'auth.url') || 'https://a.labshare.org/_api';
-    this.authAudience = _.get(config, 'services.auth.audience') || 'ls-api';
-    this.mountPath = _.get(config, 'services.mountPath') || '/:facilityId';
+    this.mainDir = config?.services?.main || process.cwd();
+    this.apiFilePattern = config?.services?.pattern || '{src/api,api}/*.js';
+    this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
+    this.authUrl = config?.facility?.shell?.Auth?.Url || config?.auth?.url || 'https://a.labshare.org/_api';
+    this.authAudience = config?.services?.auth?.audience || 'ls-api';
+    this.mountPath = config?.services?.mountPath || '/:facilityId';
     this.mountPath = this.mountPath === '/' ? '' : this.mountPath;
     const manifest = getPackageManifest(this.mainDir);
     this.packageManifests.push(manifest);
@@ -323,7 +323,7 @@ function getPackageName(manifest: any) {
  * @returns {Array} A list of LabShare package dependencies or an empty array
  */
 function getPackageDependencies(manifest: any) {
-  const dependencies = _.get(manifest, 'packageDependencies', []);
+  const dependencies = manifest?.packageDependencies || [];
   if (_.isArray(dependencies)) {
     return dependencies;
   }
