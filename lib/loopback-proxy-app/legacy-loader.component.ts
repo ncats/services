@@ -36,8 +36,7 @@ export class LegacyLoaderComponent implements Component {
     this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
     this.authUrl = config?.facility?.shell?.Auth?.Url || config?.auth?.url || 'https://a.labshare.org/_api';
     this.authAudience = config?.services?.auth?.audience || 'ls-api';
-    this.mountPath = config?.services?.mountPath || '/:facilityId';
-    this.mountPath = this.mountPath === '/' ? '' : this.mountPath;
+    this.mountPath = config?.services?.mountPath || '';
     const manifest = getPackageManifest(this.mainDir);
     this.packageManifests.push(manifest);
     const packageDependencies = getPackageDependencies(manifest);

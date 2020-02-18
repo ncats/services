@@ -30,6 +30,7 @@ describe('Services', () => {
 
             options = {services: {
                     logger: loggerMock,
+                    mountPath: '/:facilityId',
                     main: packagesPath,
                     morgan: {
                         enable: false

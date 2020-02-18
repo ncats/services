@@ -12,6 +12,7 @@ describe('Loopback Proxy App', () => {
     const config = {
       services: {
         main: `${process.cwd()}/test/fixtures/main-package`,
+        mountPath: '/:facilityId'
       }
     };
     expressApp = express();
@@ -83,11 +84,18 @@ describe('Loopback Proxy App', () => {
     await request.get('/someBasePath/api-package-1-namespace/123/_api/hello').expect('Hello World!');
   });
 
-  it('mounts API at root if mountPath is set to "/"', async () => {
+  it('mounts API at root if mountPath is not set', async () => {
     const config = {
       services: {
         main: `${process.cwd()}/test/fixtures/main-package`,
-        mountPath: '/'
+        pattern: '{src/api,api}/*.js',
+        auth: {
+          tenant: 'ls',
+          audience: 'ls-api'
+        }
+      },
+      auth: {
+        url: 'https://a.labshare.org/_api'
       }
     };
     const lb4App = new LoopbackProxyApplication(config);
