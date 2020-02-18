@@ -1,3 +1,10 @@
+## [4.0.7](https://github.com/LabShare/services/compare/v4.0.6...v4.0.7) (2020-02-18)
+
+
+### Bug Fixes
+
+* make mounthPath configurable ([002b0fa](https://github.com/LabShare/services/commit/002b0fa9e7a2505c1be06d280fff6282afa00ba7))
+
 ## [4.0.6](https://github.com/LabShare/services/compare/v4.0.5...v4.0.6) (2020-02-14)
 
 
