@@ -27,7 +27,6 @@ export class LegacyLoaderComponent implements Component {
   packageManifests: any[] = [];
   mainDir: string;
   apiFilePattern: string;
-  mountPath: string;
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: Application) {
     const config = this.application.options;
@@ -36,28 +35,30 @@ export class LegacyLoaderComponent implements Component {
     this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
     this.authUrl = config?.facility?.shell?.Auth?.Url || config?.auth?.url || 'https://a.labshare.org/_api';
     this.authAudience = config?.services?.auth?.audience || 'ls-api';
-    this.mountPath = config?.services?.mountPath || '';
+    const mountPoints = config?.services?.mountPoints || [''];
     const manifest = getPackageManifest(this.mainDir);
     this.packageManifests.push(manifest);
     const packageDependencies = getPackageDependencies(manifest);
 
-    // mount legacy API routes from the current module
-    this.mountLegacyApiDirectory(this.application, this.mainDir);
+    for(const mountPoint of mountPoints) {
+      // mount legacy API routes from the current module
+      this.mountLegacyApiDirectory(this.application, this.mainDir, mountPoint);
 
-    // mount legacy API routes from package dependencies
-    for (const dependency of packageDependencies) {
-      const dependencyPath = resolve(dependency, {cwd: this.mainDir});
-      if (!dependencyPath) {
-        throw new Error(`Dependency: "${dependency}" required by "${this.mainDir}" could not be found. Is it installed?`);
+      // mount legacy API routes from package dependencies
+      for (const dependency of packageDependencies) {
+        const dependencyPath = resolve(dependency, {cwd: this.mainDir});
+        if (!dependencyPath) {
+          throw new Error(`Dependency: "${dependency}" required by "${this.mainDir}" could not be found. Is it installed?`);
+        }
+        this.mountLegacyApiDirectory(this.application, dependencyPath, mountPoint);
       }
-      this.mountLegacyApiDirectory(this.application, dependencyPath);
     }
     // add controller for package versions
     const versionsController = createVersionsController(this.packageManifests);
     this.application.controller(versionsController);
   }
 
-  private mountLegacyApiDirectory(application: Application, directory: string) {
+  private mountLegacyApiDirectory(application: Application, directory: string, mountPoint: string) {
     const serviceModulePaths = glob.sync(this.apiFilePattern, {cwd: directory}).map(file => {
       return path.resolve(directory, file);
     });
@@ -66,7 +67,10 @@ export class LegacyLoaderComponent implements Component {
     if (!manifest) {
       return;
     }
-    this.packageManifests.push(manifest);
+
+    if (!_.find(this.packageManifests, {'name': manifest.name})) {
+      this.packageManifests.push(manifest);
+    }
     const packageName = getPackageName(manifest);
 
     const serviceRoutes = getServiceRoutes(serviceModulePaths);
@@ -75,7 +79,7 @@ export class LegacyLoaderComponent implements Component {
     // loop over discovered api modules
     for (const service in serviceRoutes) {
       const routes = serviceRoutes[service];
-      const controllerClassName = `${service}Controller`;
+      const controllerClassName = `${getControllerPrefix(mountPoint)}${service}Controller`;
       const middlewareFunctions: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
       const pathsSpecs: PathsObject = {}; // LB4 object to add to class to specify route / handler mapping
       // loop over routes defined in the module
@@ -92,7 +96,7 @@ export class LegacyLoaderComponent implements Component {
                 .replace('?', '');
             middlewareFunctions[handlerName] = route.middleware;
             // prefix each path with mount path
-            route.path = `${this.mountPath}/${packageName}${route.path}`.toLowerCase();
+            route.path = `${mountPoint}/${packageName}${route.path}`.toLowerCase();
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
           }
         } catch (err) {
@@ -328,6 +332,16 @@ function getPackageDependencies(manifest: any) {
   }
   return Object.keys(manifest.packageDependencies);
 }
+
+/**
+ * Takes mountPoint and returns a prefix to be used for controller class names
+ * @param mountPoint - mount point
+ * Example: for mountPoint = "/:facility/client" it returns "FacilityClient"
+ */
+function getControllerPrefix(mountPoint: string) {
+  return _.words(mountPoint).map(_.capitalize).join('');
+}
+
 
 interface LegacyRoute {
   path: string;
