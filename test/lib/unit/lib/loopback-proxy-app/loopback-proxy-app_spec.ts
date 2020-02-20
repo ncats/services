@@ -12,7 +12,7 @@ describe('Loopback Proxy App', () => {
     const config = {
       services: {
         main: `${process.cwd()}/test/fixtures/main-package`,
-        mountPath: '/:facilityId'
+        mountPoints: ['/:facilityId', '/someBasePath']
       }
     };
     expressApp = express();
@@ -69,18 +69,7 @@ describe('Loopback Proxy App', () => {
     await request.get('/test-facility/nested-api-package/nested/api').expect(404);
   });
 
-  it('mounts API at specified mountPath', async () => {
-    const config = {
-      services: {
-        main: `${process.cwd()}/test/fixtures/main-package`,
-        mountPath: '/someBasePath'
-      }
-    };
-    const lb4App = new LoopbackProxyApplication(config);
-    // @ts-ignore
-    expressApp._router = undefined;  // clear all previously defined routes
-    expressApp.use(lb4App.requestHandler);
-    await lb4App.boot();
+  it('exposes routes at other mountPoints', async () => {
     await request.get('/someBasePath/api-package-1-namespace/123/_api/hello').expect('Hello World!');
   });
 
