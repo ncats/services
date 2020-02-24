@@ -1,3 +1,10 @@
+## [4.0.9](https://github.com/LabShare/services/compare/v4.0.8...v4.0.9) (2020-02-24)
+
+
+### Bug Fixes
+
+* avoid name clash between services with same names ([47cdcbe](https://github.com/LabShare/services/commit/47cdcbee993e41f5a0f5efb8398d93e7ef12fcf8))
+
 ## [4.0.8](https://github.com/LabShare/services/compare/v4.0.7...v4.0.8) (2020-02-20)
 
 
