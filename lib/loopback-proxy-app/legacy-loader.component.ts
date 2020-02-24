@@ -79,7 +79,7 @@ export class LegacyLoaderComponent implements Component {
     // loop over discovered api modules
     for (const service in serviceRoutes) {
       const routes = serviceRoutes[service];
-      const controllerClassName = `${getControllerPrefix(mountPoint)}${service}Controller`;
+      const controllerClassName = `${getControllerPrefix(mountPoint, packageName)}${service}Controller`;
       const middlewareFunctions: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
       const pathsSpecs: PathsObject = {}; // LB4 object to add to class to specify route / handler mapping
       // loop over routes defined in the module
@@ -338,8 +338,8 @@ function getPackageDependencies(manifest: any) {
  * @param mountPoint - mount point
  * Example: for mountPoint = "/:facility/client" it returns "FacilityClient"
  */
-function getControllerPrefix(mountPoint: string) {
-  return _.words(mountPoint).map(_.capitalize).join('');
+function getControllerPrefix(mountPoint: string, packageName: string) {
+  return _.words(`${mountPoint}/${packageName}`).map(_.capitalize).join('')
 }
 
 
