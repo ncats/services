@@ -1,3 +1,10 @@
+## [4.0.10](https://github.com/LabShare/services/compare/v4.0.9...v4.0.10) (2020-02-25)
+
+
+### Bug Fixes
+
+* prevent path parameters from being lower cased ([0305a39](https://github.com/LabShare/services/commit/0305a399842660fdde4b44b51caebc02901a8230))
+
 ## [4.0.9](https://github.com/LabShare/services/compare/v4.0.8...v4.0.9) (2020-02-24)
 
 
