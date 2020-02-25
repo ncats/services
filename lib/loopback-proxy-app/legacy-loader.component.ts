@@ -95,8 +95,8 @@ export class LegacyLoaderComponent implements Component {
                 .replace(/-/g, '_')
                 .replace('?', '');
             middlewareFunctions[handlerName] = route.middleware;
-            // prefix each path with mount path
-            route.path = `${mountPoint}/${packageName}${route.path}`.toLowerCase();
+            // prefix each path with mount path and lower case it
+            route.path = pathToLowerCase(`${mountPoint}/${packageName}${route.path}`);
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
           }
         } catch (err) {
@@ -342,6 +342,21 @@ function getControllerPrefix(mountPoint: string, packageName: string) {
   return _.words(`${mountPoint}/${packageName}`).map(_.capitalize).join('')
 }
 
+/**
+ * Converts path of a URL to lowercase while leaving original casing for query string and path parameters
+ * @param url
+ */
+function pathToLowerCase(url: string): string {
+  // split url into path and query string
+  const urlParts = url.split('?');
+  // split path into parts
+  let pathParts = urlParts[0].split('/');
+  pathParts = pathParts.map((part) => {
+    return part.startsWith(':') ? part : part.toLowerCase(); // don't lower case path parameters
+  });
+  urlParts[0] = pathParts.join('/');
+  return urlParts.join('?');
+}
 
 interface LegacyRoute {
   path: string;
