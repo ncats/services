@@ -6,15 +6,14 @@ import {RestBindings, RouterSpec} from '@loopback/rest';
 import {PathObject, PathsObject, ParameterObject, ParameterLocation} from '@loopback/openapi-v3';
 import {Request, Response, NextFunction} from 'express';
 import {OAI3Keys} from '@loopback/openapi-v3/dist/keys';
-import {Injection, MetadataInspector} from '@loopback/context';
+import {Injection, MetadataInspector, MethodDecoratorFactory} from '@loopback/context';
 import {MetadataAccessor, MetadataMap} from '@loopback/metadata';
 import * as async from 'async';
 import * as util from 'util';
 import * as resolve from 'resolve-pkg';
 import * as VError from 'verror';
 import {createVersionsController} from './versions.controller';
-
-const servicesAuth = require('@labshare/services-auth');
+import {AUTHENTICATION_METADATA_KEY, AuthenticationMetadata} from '@labshare/services-auth';
 
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
 const PATH_PARAMS_REGEX = /[\/?]:(.*?)(?![^\/])/g;
@@ -74,7 +73,6 @@ export class LegacyLoaderComponent implements Component {
     const packageName = getPackageName(manifest);
 
     const serviceRoutes = getServiceRoutes(serviceModulePaths);
-    this.applyAuthMiddleware(serviceRoutes);
 
     // loop over discovered api modules
     for (const service in serviceRoutes) {
@@ -123,11 +121,6 @@ export class LegacyLoaderComponent implements Component {
         throw new VError(err, `Error registering module ${service} as LoopBack controller.`);
       }
     }
-  }
-
-  private applyAuthMiddleware(serviceRoutes: any) {
-    const auth = servicesAuth({authUrl: this.authUrl, tenant: this.authTenant, audience: this.authAudience});
-    auth({services: serviceRoutes});
   }
 }
 
@@ -362,4 +355,13 @@ interface LegacyRoute {
   path: string;
   httpMethod: string;
   middleware: (req: Request, res: Response) => {};
+}
+
+function applyAuthMetadata(target: any, method: string, spec: AuthenticationMetadata = {}) {
+  const methodDescriptor = Object.getOwnPropertyDescriptor(target, method) as TypedPropertyDescriptor<any>;
+  return MethodDecoratorFactory.createDecorator<AuthenticationMetadata>(
+    AUTHENTICATION_METADATA_KEY,
+    spec,
+    {decoratorName: '@authenticate'},
+  )(target, method, methodDescriptor);
 }
