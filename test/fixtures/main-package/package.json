@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "packageDependencies": [
+    "4d-api-package",
     "api-package1",
     "api-package2",
     "socket-api-package1"
