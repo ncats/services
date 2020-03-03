@@ -1,3 +1,10 @@
+## [4.0.11](https://github.com/LabShare/services/compare/v4.0.10...v4.0.11) (2020-03-03)
+
+
+### Bug Fixes
+
+* make sure controller class name does not start with a number ([8248a7c](https://github.com/LabShare/services/commit/8248a7cb6839383b8c758f2345629a860828ba07))
+
 ## [4.0.10](https://github.com/LabShare/services/compare/v4.0.9...v4.0.10) (2020-02-25)
 
 
