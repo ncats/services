@@ -339,10 +339,7 @@ function getPackageDependencies(manifest: any) {
  * Example: for mountPoint = "/:facility/client" it returns "FacilityClient"
  */
 function getControllerPrefix(mountPoint: string, packageName: string) {
-  return _.words(`${mountPoint}/${packageName}`)
-    .map(_.capitalize)
-    .join('')
-    .replace(/^[0-9]/, "X"); // make sure prefix does not start with a number
+  return _.words(`${mountPoint}/${packageName}`).map(_.capitalize).join('').replace(/^[0-9]/, "X");
 }
 
 /**
