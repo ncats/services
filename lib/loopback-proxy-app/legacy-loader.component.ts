@@ -78,7 +78,7 @@ export class LegacyLoaderComponent implements Component {
     for (const service in serviceRoutes) {
       const routes = serviceRoutes[service];
       const controllerClassName = `${getControllerPrefix(mountPoint, packageName)}${service}Controller`;
-      const middlewareFunctions: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
+      const middleware: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
       const pathsSpecs: PathsObject = {}; // LB4 object to add to class to specify route / handler mapping
       // loop over routes defined in the module
       for (const route of routes) {
@@ -92,7 +92,7 @@ export class LegacyLoaderComponent implements Component {
                 .replace(/\//g, '_')
                 .replace(/-/g, '_')
                 .replace('?', '');
-            middlewareFunctions[handlerName] = route.middleware;
+            middleware[handlerName] = {handler: route.middleware}; //TODO conditionally add auth property
             // prefix each path with mount path and lower case it
             route.path = pathToLowerCase(`${mountPoint}/${packageName}${route.path}`);
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
@@ -103,12 +103,13 @@ export class LegacyLoaderComponent implements Component {
       }
       try {
         const controllerSpecs: RouterSpec = {paths: pathsSpecs};
-        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middlewareFunctions));
-        const defineNewController = new Function('middlewareRunner', 'middlewareFunctions', controllerClassDefinition);
-        const controllerClass = defineNewController(middlewareRunnerPromise, middlewareFunctions);
+        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middleware));
+        const defineNewController = new Function('middlewareRunner', 'middleware', controllerClassDefinition);
+        const controllerClass = defineNewController(middlewareRunnerPromise, middleware);
 
         // Add metadata for mapping HTTP routes to controller class functions
         MetadataInspector.defineMetadata(OAI3Keys.CONTROLLER_SPEC_KEY.key, controllerSpecs, controllerClass);
+        //TODO apply auth metadata
 
         const injectionSpecs = getControllerInjectionSpecs(controllerClass);
         // Add metadata for injecting HTTP Request and Response objects into controller class
@@ -199,7 +200,7 @@ function getControllerClassDefinition(controllerClassName: string, handlerNames:
   for (const handlerName of handlerNames) {
     handlers =
       handlers +
-      `async ${handlerName}() {return await middlewareRunner(middlewareFunctions['${handlerName}'], this.request, this.response);}\n`;
+      `async ${handlerName}() {return await middlewareRunner(middleware['${handlerName}'].handler, this.request, this.response);}\n`;
   }
   return `return class ${controllerClassName} {
     constructor(request, response) {
@@ -332,7 +333,10 @@ function getPackageDependencies(manifest: any) {
  * Example: for mountPoint = "/:facility/client" it returns "FacilityClient"
  */
 function getControllerPrefix(mountPoint: string, packageName: string) {
-  return _.words(`${mountPoint}/${packageName}`).map(_.capitalize).join('')
+  return _.words(`${mountPoint}/${packageName}`)
+    .map(_.capitalize)
+    .join('')
+    .replace(/^[0-9]/, "X"); // make sure prefix does not start with a number
 }
 
 /**

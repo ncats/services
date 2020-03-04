@@ -61,6 +61,10 @@ describe('Loopback Proxy App', () => {
     await request.delete('/test-facility/api-package-2/list/mylist/items/1k423').expect(200);
   });
 
+  it('exposes paths of modules which names start with a number', async () => {
+    await request.get('/test-facility/4d-api-package/list/mylist/items/123').expect(200);
+  });
+
   it('should provide case insensitive routing', async () => {
     await request.get('/test-facility/api-package-1-namespace/123/_api/HellO').expect('Hello World!');
   });
