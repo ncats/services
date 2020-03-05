@@ -6,6 +6,7 @@ const servicesCache = require('@labshare/services-cache').Middleware
 const path = require('path');
 const yargs = require('yargs');
 const {buildService, getBuildDate} = require('../lib/cli/build-service');
+const log = require('fancy-log');
 
 exports.usage = [
   'lsc services start      - Start up LabShare API services.',
@@ -14,7 +15,7 @@ exports.usage = [
 ]
 
 exports.start = async function () {
-  this.log.info('Starting LabShare services...')
+  log.info('Starting LabShare services...')
 
   const config = _.get(global, 'LabShare.Config')
   const services = new Services(config)
@@ -32,21 +33,21 @@ exports.start = async function () {
 }
 
 exports.build = async function () {
-  this.log.info('Building LabShare services...');
-  const distPath = path.join('dist', `service.${getBuildDate()}`);
-  const options = getBuildOptions({defaultDestination: distPath});
+  log.info('Building LabShare services...');
+  const options = getBuildOptions();
+  const distPath = path.join('dist', `service.${options.buildVersion || getBuildDate()}`);
+  options.destination = options.destination || distPath;
   await buildService(options);
 }
 
 
 /**
  * @description Gets the common build options
- * @param {String} defaultDestination
  * @param {object} extendedOptions
  * @returns {debug, buildVersion, npmCache}
  * @private
  */
-function getBuildOptions({defaultDestination}, extendedOptions = {}) {
+function getBuildOptions(extendedOptions = {}) {
   return yargs.options(_.extend({
     debug: {
       describe: 'Build unminified version',
@@ -70,8 +71,7 @@ function getBuildOptions({defaultDestination}, extendedOptions = {}) {
     destination: {
       alias: ['dest', 'dist'],
       describe: 'The path to the build destination',
-      type: 'string',
-      default: defaultDestination
+      type: 'string'
     }
   }, extendedOptions)).argv;
 }
