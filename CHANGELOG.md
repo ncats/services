@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/LabShare/services/compare/v4.0.11...v4.1.0) (2020-03-05)
+
+
+### Features
+
+* added build cli command ([941c082](https://github.com/LabShare/services/commit/941c0826249cf83f0567323ce6a8b822cce660d0))
+
 ## [4.0.11](https://github.com/LabShare/services/compare/v4.0.10...v4.0.11) (2020-03-03)
 
 
