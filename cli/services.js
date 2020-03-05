@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 
-const Services = require('../lib/services')
-const _ = require('lodash')
-const servicesCache = require('@labshare/services-cache').Middleware
+const Services = require('../lib/services');
+const _ = require('lodash');
+const servicesCache = require('@labshare/services-cache').Middleware;
 const path = require('path');
 const yargs = require('yargs');
 const {buildService, getBuildDate} = require('../lib/cli/build-service');
@@ -12,25 +12,25 @@ exports.usage = [
   'lsc services start      - Start up LabShare API services.',
   'lsc services build      - Build LabShare API services.',
   ''
-]
+];
 
 exports.start = async function () {
-  log.info('Starting LabShare services...')
+  log.info('Starting LabShare services...');
 
-  const config = _.get(global, 'LabShare.Config')
-  const services = new Services(config)
+  const config = _.get(global, 'LabShare.Config');
+  const services = new Services(config);
 
   services.config(({app}) => {
     // Enable response compression and CORS
-    app.use(require('compression')())
-    app.use(require('cors')())
-  })
+    app.use(require('compression')());
+    app.use(require('cors')());
+  });
 
   if (_.get(config, 'shell.Cache.enable')) {
-    services.config(servicesCache(_.get(config, 'shell.Cache'), this.log))
+    services.config(servicesCache(_.get(config, 'shell.Cache'), this.log));
   }
-  await services.start()
-}
+  await services.start();
+};
 
 exports.build = async function () {
   log.info('Building LabShare services...');
@@ -38,8 +38,7 @@ exports.build = async function () {
   const distPath = path.join('dist', `service.${options.buildVersion || getBuildDate()}`);
   options.destination = options.destination || distPath;
   await buildService(options);
-}
-
+};
 
 /**
  * @description Gets the common build options
