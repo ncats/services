@@ -14,6 +14,7 @@ import * as resolve from 'resolve-pkg';
 import * as VError from 'verror';
 import {createVersionsController} from './versions.controller';
 
+const {getPackageDependencies, getPackageName, getPackageManifest}  = require('../api/utils');
 const servicesAuth = require('@labshare/services-auth');
 
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
@@ -299,38 +300,6 @@ function getControllerInjectionSpecs(target: Object): MetadataMap<Readonly<Injec
       }
     ]
   };
-}
-
-function getPackageManifest(directory: string) {
-  const manifestPath = path.resolve(directory, 'package.json');
-  const manifest = require(manifestPath);
-
-  if (!manifest) {
-    return null;
-  } else if (!getPackageName(manifest)) {
-    throw new Error(manifestPath + ' is missing a `name` property');
-  }
-
-  return manifest;
-}
-
-function getPackageName(manifest: any) {
-  if (!manifest || !(manifest.namespace || manifest.name)) {
-    return null;
-  }
-  return (manifest.namespace || manifest.name).toLowerCase();
-}
-
-/**
- * @param manifest - A parsed LabShare package package.json file
- * @returns {Array} A list of LabShare package dependencies or an empty array
- */
-function getPackageDependencies(manifest: any) {
-  const dependencies = manifest?.packageDependencies || [];
-  if (_.isArray(dependencies)) {
-    return dependencies;
-  }
-  return Object.keys(manifest.packageDependencies);
 }
 
 /**
