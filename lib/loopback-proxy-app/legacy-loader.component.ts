@@ -15,6 +15,9 @@ import * as VError from 'verror';
 import {createVersionsController} from './versions.controller';
 import {AUTHENTICATION_METADATA_KEY, AuthenticationMetadata} from '@labshare/services-auth';
 
+const {getPackageDependencies, getPackageName, getPackageManifest}  = require('../api/utils');
+const servicesAuth = require('@labshare/services-auth');
+
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
 const PATH_PARAMS_REGEX = /[\/?]:(.*?)(?![^\/])/g;
 
@@ -32,7 +35,7 @@ export class LegacyLoaderComponent implements Component {
     this.mainDir = config?.services?.main || process.cwd();
     this.apiFilePattern = config?.services?.pattern || '{src/api,api}/*.js';
     this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
-    this.authUrl = config?.facility?.shell?.Auth?.Url || config?.auth?.url || 'https://a.labshare.org/_api';
+    this.authUrl = config?.services?.auth?.url || config?.auth?.url || 'https://a.labshare.org/_api';
     this.authAudience = config?.services?.auth?.audience || 'ls-api';
     const mountPoints = config?.services?.mountPoints || [''];
     const manifest = getPackageManifest(this.mainDir);
@@ -293,38 +296,6 @@ function getControllerInjectionSpecs(target: Object): MetadataMap<Readonly<Injec
       }
     ]
   };
-}
-
-function getPackageManifest(directory: string) {
-  const manifestPath = path.resolve(directory, 'package.json');
-  const manifest = require(manifestPath);
-
-  if (!manifest) {
-    return null;
-  } else if (!getPackageName(manifest)) {
-    throw new Error(manifestPath + ' is missing a `name` property');
-  }
-
-  return manifest;
-}
-
-function getPackageName(manifest: any) {
-  if (!manifest || !(manifest.namespace || manifest.name)) {
-    return null;
-  }
-  return (manifest.namespace || manifest.name).toLowerCase();
-}
-
-/**
- * @param manifest - A parsed LabShare package package.json file
- * @returns {Array} A list of LabShare package dependencies or an empty array
- */
-function getPackageDependencies(manifest: any) {
-  const dependencies = manifest?.packageDependencies || [];
-  if (_.isArray(dependencies)) {
-    return dependencies;
-  }
-  return Object.keys(manifest.packageDependencies);
 }
 
 /**
