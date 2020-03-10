@@ -54,3 +54,6 @@ dist
 **/loopback-proxy-app/*.js
 **/loopback-proxy-app/*.js.map
 **/loopback-proxy-app/*.d.ts
+**/loopback-loader/*.js
+**/loopback-loader/*.js.map
+**/loopback-loader/*.d.ts
