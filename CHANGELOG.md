@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/LabShare/services/compare/v4.1.0...v4.1.1) (2020-03-06)
+
+
+### Bug Fixes
+
+* read auth url from services.auth.url config setting ([1c808f7](https://github.com/LabShare/services/commit/1c808f7df56158d3c7d0c9428fe139c1301ebfbb))
+
 # [4.1.0](https://github.com/LabShare/services/compare/v4.0.11...v4.1.0) (2020-03-05)
 
 
