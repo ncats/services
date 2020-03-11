@@ -16,16 +16,11 @@ import {createVersionsController} from './versions.controller';
 import {AUTHENTICATION_METADATA_KEY, AuthenticationMetadata} from '@labshare/services-auth';
 
 const {getPackageDependencies, getPackageName, getPackageManifest}  = require('../api/utils');
-const servicesAuth = require('@labshare/services-auth');
-
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
 const PATH_PARAMS_REGEX = /[\/?]:(.*?)(?![^\/])/g;
 
 export class LegacyLoaderComponent implements Component {
 
-  authUrl: string;
-  authTenant: string;
-  authAudience: string;
   packageManifests: any[] = [];
   mainDir: string;
   apiFilePattern: string;
@@ -34,9 +29,6 @@ export class LegacyLoaderComponent implements Component {
     const config = this.application.options;
     this.mainDir = config?.services?.main || process.cwd();
     this.apiFilePattern = config?.services?.pattern || '{src/api,api}/*.js';
-    this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
-    this.authUrl = config?.services?.auth?.url || config?.auth?.url || 'https://a.labshare.org/_api';
-    this.authAudience = config?.services?.auth?.audience || 'ls-api';
     const mountPoints = config?.services?.mountPoints || [''];
     const manifest = getPackageManifest(this.mainDir);
     this.packageManifests.push(manifest);
@@ -81,7 +73,7 @@ export class LegacyLoaderComponent implements Component {
     for (const service in serviceRoutes) {
       const routes = serviceRoutes[service];
       const controllerClassName = `${getControllerPrefix(mountPoint, packageName)}${service}Controller`;
-      const middleware: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
+      const middlewareSpecs: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
       const pathsSpecs: PathsObject = {}; // LB4 object to add to class to specify route / handler mapping
       // loop over routes defined in the module
       for (const route of routes) {
@@ -95,7 +87,13 @@ export class LegacyLoaderComponent implements Component {
                 .replace(/\//g, '_')
                 .replace(/-/g, '_')
                 .replace('?', '');
-            middleware[handlerName] = {handler: route.middleware}; //TODO conditionally add auth property
+            middlewareSpecs[handlerName] = {
+              handler: route.middleware,
+              auth: {
+                scope: route.scope,
+                accessLevel: route.accessLevel
+              }
+            };
             // prefix each path with mount path and lower case it
             route.path = pathToLowerCase(`${mountPoint}/${packageName}${route.path}`);
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
@@ -106,13 +104,13 @@ export class LegacyLoaderComponent implements Component {
       }
       try {
         const controllerSpecs: RouterSpec = {paths: pathsSpecs};
-        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middleware));
-        const defineNewController = new Function('middlewareRunner', 'middleware', controllerClassDefinition);
-        const controllerClass = defineNewController(middlewareRunnerPromise, middleware);
+        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middlewareSpecs));
+        const defineNewController = new Function('middlewareRunner', 'middlewareSpecs', controllerClassDefinition);
+        const controllerClass = defineNewController(middlewareRunnerPromise, middlewareSpecs);
 
         // Add metadata for mapping HTTP routes to controller class functions
         MetadataInspector.defineMetadata(OAI3Keys.CONTROLLER_SPEC_KEY.key, controllerSpecs, controllerClass);
-        //TODO apply auth metadata
+        defineAuthMetadata(controllerClass, middlewareSpecs);
 
         const injectionSpecs = getControllerInjectionSpecs(controllerClass);
         // Add metadata for injecting HTTP Request and Response objects into controller class
@@ -203,7 +201,7 @@ function getControllerClassDefinition(controllerClassName: string, handlerNames:
   for (const handlerName of handlerNames) {
     handlers =
       handlers +
-      `async ${handlerName}() {return await middlewareRunner(middleware['${handlerName}'].handler, this.request, this.response);}\n`;
+      `async ${handlerName}() {return await middlewareRunner(middlewareSpecs['${handlerName}'].handler, this.request, this.response);}\n`;
   }
   return `return class ${controllerClassName} {
     constructor(request, response) {
@@ -332,7 +330,18 @@ interface LegacyRoute {
   middleware: (req: Request, res: Response) => {};
 }
 
-function applyAuthMetadata(target: any, method: string, spec: AuthenticationMetadata = {}) {
+function defineAuthMetadata(target: any, middlewareSpecs: any) {
+  for(const middleware in middlewareSpecs) {
+    const authScope = middlewareSpecs[middleware].auth?.scope;
+    const {accessLevel} = middlewareSpecs[middleware].auth;
+    if (authScope || accessLevel) {
+      const authOptions = authScope ? {scope: authScope} : undefined;
+      applyMiddlewareSpec(target.prototype, middleware, authOptions);
+    }
+  }
+}
+
+function applyMiddlewareSpec(target: any, method: string, spec: AuthenticationMetadata = {}) {
   const methodDescriptor = Object.getOwnPropertyDescriptor(target, method) as TypedPropertyDescriptor<any>;
   return MethodDecoratorFactory.createDecorator<AuthenticationMetadata>(
     AUTHENTICATION_METADATA_KEY,
