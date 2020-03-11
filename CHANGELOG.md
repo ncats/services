@@ -1,3 +1,15 @@
+# [4.2.0](https://github.com/LabShare/services/compare/v4.1.1...v4.2.0) (2020-03-11)
+
+
+### Bug Fixes
+
+* updated to @labshare/services-auth v3 ([198776f](https://github.com/LabShare/services/commit/198776f4179f99b71463ae20517337d9df936cf3))
+
+
+### Features
+
+* add applyAuthMetadata() method ([7b50402](https://github.com/LabShare/services/commit/7b504024038d69f646fba7d4002c6414f0fe29fd))
+
 ## [4.1.1](https://github.com/LabShare/services/compare/v4.1.0...v4.1.1) (2020-03-06)
 
 
