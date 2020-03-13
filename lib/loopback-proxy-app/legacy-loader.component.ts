@@ -6,25 +6,21 @@ import {RestBindings, RouterSpec} from '@loopback/rest';
 import {PathObject, PathsObject, ParameterObject, ParameterLocation} from '@loopback/openapi-v3';
 import {Request, Response, NextFunction} from 'express';
 import {OAI3Keys} from '@loopback/openapi-v3/dist/keys';
-import {Injection, MetadataInspector} from '@loopback/context';
+import {Injection, MetadataInspector, MethodDecoratorFactory} from '@loopback/context';
 import {MetadataAccessor, MetadataMap} from '@loopback/metadata';
 import * as async from 'async';
 import * as util from 'util';
 import * as resolve from 'resolve-pkg';
 import * as VError from 'verror';
 import {createVersionsController} from './versions.controller';
+import {AUTHENTICATION_METADATA_KEY, AuthenticationMetadata} from '@labshare/services-auth';
 
 const {getPackageDependencies, getPackageName, getPackageManifest , getPackageLscSettings}  = require('../api/utils');
-const servicesAuth = require('@labshare/services-auth');
-
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
 const PATH_PARAMS_REGEX = /[\/?]:(.*?)(?![^\/])/g;
 
 export class LegacyLoaderComponent implements Component {
 
-  authUrl: string;
-  authTenant: string;
-  authAudience: string;
   packageManifests: any[] = [];
   mainDir: string;
   apiFilePattern: string;
@@ -35,9 +31,6 @@ export class LegacyLoaderComponent implements Component {
     const manifest = getPackageManifest(this.mainDir);
     const lscSettings = getPackageLscSettings(manifest);
     this.apiFilePattern = lscSettings?.apiPattern ||  config?.services?.pattern || '{src/api,api}/*.js';
-    this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
-    this.authUrl = config?.services?.auth?.url || config?.auth?.url || 'https://a.labshare.org/_api';
-    this.authAudience = config?.services?.auth?.audience || 'ls-api';
     const mountPoints = config?.services?.mountPoints || [''];
     
     this.packageManifests.push(manifest);
@@ -78,13 +71,12 @@ export class LegacyLoaderComponent implements Component {
     const packageName = getPackageName(manifest);
 
     const serviceRoutes = getServiceRoutes(serviceModulePaths);
-    this.applyAuthMiddleware(serviceRoutes);
 
     // loop over discovered api modules
     for (const service in serviceRoutes) {
       const routes = serviceRoutes[service];
       const controllerClassName = `${getControllerPrefix(mountPoint, packageName)}${service}Controller`;
-      const middlewareFunctions: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
+      const middlewareSpecs: any = {}; // an key-value object with keys being route handler names and values the handler function themselves
       const pathsSpecs: PathsObject = {}; // LB4 object to add to class to specify route / handler mapping
       // loop over routes defined in the module
       for (const route of routes) {
@@ -98,7 +90,13 @@ export class LegacyLoaderComponent implements Component {
                 .replace(/\//g, '_')
                 .replace(/-/g, '_')
                 .replace('?', '');
-            middlewareFunctions[handlerName] = route.middleware;
+            middlewareSpecs[handlerName] = {
+              handler: route.middleware,
+              auth: {
+                scope: route.scope,
+                accessLevel: route.accessLevel
+              }
+            };
             // prefix each path with mount path and lower case it
             route.path = pathToLowerCase(`${mountPoint}/${packageName}${route.path}`);
             appendPath(pathsSpecs, route, controllerClassName, handlerName);
@@ -109,12 +107,13 @@ export class LegacyLoaderComponent implements Component {
       }
       try {
         const controllerSpecs: RouterSpec = {paths: pathsSpecs};
-        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middlewareFunctions));
-        const defineNewController = new Function('middlewareRunner', 'middlewareFunctions', controllerClassDefinition);
-        const controllerClass = defineNewController(middlewareRunnerPromise, middlewareFunctions);
+        const controllerClassDefinition = getControllerClassDefinition(controllerClassName, Object.keys(middlewareSpecs));
+        const defineNewController = new Function('middlewareRunner', 'middlewareSpecs', controllerClassDefinition);
+        const controllerClass = defineNewController(middlewareRunnerPromise, middlewareSpecs);
 
         // Add metadata for mapping HTTP routes to controller class functions
         MetadataInspector.defineMetadata(OAI3Keys.CONTROLLER_SPEC_KEY.key, controllerSpecs, controllerClass);
+        defineAuthMetadata(controllerClass, middlewareSpecs);
 
         const injectionSpecs = getControllerInjectionSpecs(controllerClass);
         // Add metadata for injecting HTTP Request and Response objects into controller class
@@ -127,11 +126,6 @@ export class LegacyLoaderComponent implements Component {
         throw new VError(err, `Error registering module ${service} as LoopBack controller.`);
       }
     }
-  }
-
-  private applyAuthMiddleware(serviceRoutes: any) {
-    const auth = servicesAuth({authUrl: this.authUrl, tenant: this.authTenant, audience: this.authAudience});
-    auth({services: serviceRoutes});
   }
 }
 
@@ -210,7 +204,7 @@ function getControllerClassDefinition(controllerClassName: string, handlerNames:
   for (const handlerName of handlerNames) {
     handlers =
       handlers +
-      `async ${handlerName}() {return await middlewareRunner(middlewareFunctions['${handlerName}'], this.request, this.response);}\n`;
+      `async ${handlerName}() {return await middlewareRunner(middlewareSpecs['${handlerName}'].handler, this.request, this.response);}\n`;
   }
   return `return class ${controllerClassName} {
     constructor(request, response) {
@@ -337,4 +331,24 @@ interface LegacyRoute {
   path: string;
   httpMethod: string;
   middleware: (req: Request, res: Response) => {};
+}
+
+function defineAuthMetadata(target: any, middlewareSpecs: any) {
+  for(const middleware in middlewareSpecs) {
+    const authScope = middlewareSpecs[middleware].auth?.scope;
+    const {accessLevel} = middlewareSpecs[middleware].auth;
+    if (authScope || accessLevel) {
+      const authOptions = authScope ? {scope: authScope} : undefined;
+      applyMiddlewareSpec(target.prototype, middleware, authOptions);
+    }
+  }
+}
+
+function applyMiddlewareSpec(target: any, method: string, spec: AuthenticationMetadata = {}) {
+  const methodDescriptor = Object.getOwnPropertyDescriptor(target, method) as TypedPropertyDescriptor<any>;
+  return MethodDecoratorFactory.createDecorator<AuthenticationMetadata>(
+    AUTHENTICATION_METADATA_KEY,
+    spec,
+    {decoratorName: '@authenticate'},
+  )(target, method, methodDescriptor);
 }

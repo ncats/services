@@ -2,7 +2,7 @@
   "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {
@@ -34,7 +34,7 @@
     ]
   },
   "dependencies": {
-    "@labshare/services-auth": "^2.1.4",
+    "@labshare/services-auth": "^3.3.0",
     "@labshare/services-cache": "^1.19.0",
     "@labshare/services-health": "^1.0.5",
     "@labshare/services-logger": "^1.1.5",
