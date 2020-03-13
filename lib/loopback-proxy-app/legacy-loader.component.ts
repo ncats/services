@@ -14,7 +14,7 @@ import * as resolve from 'resolve-pkg';
 import * as VError from 'verror';
 import {createVersionsController} from './versions.controller';
 
-const {getPackageDependencies, getPackageName, getPackageManifest}  = require('../api/utils');
+const {getPackageDependencies, getPackageName, getPackageManifest , getPackageLscSettings}  = require('../api/utils');
 const servicesAuth = require('@labshare/services-auth');
 
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
@@ -32,21 +32,24 @@ export class LegacyLoaderComponent implements Component {
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: Application) {
     const config = this.application.options;
     this.mainDir = config?.services?.main || process.cwd();
-    this.apiFilePattern = config?.services?.pattern || '{src/api,api}/*.js';
+    const manifest = getPackageManifest(this.mainDir);
+    const lscSettings = getPackageLscSettings(manifest);
+    this.apiFilePattern = lscSettings?.apiPattern ||  config?.services?.pattern || '{src/api,api}/*.js';
     this.authTenant = config?.services?.auth?.tenant || config?.services?.auth?.organization || 'ls';
     this.authUrl = config?.services?.auth?.url || config?.auth?.url || 'https://a.labshare.org/_api';
     this.authAudience = config?.services?.auth?.audience || 'ls-api';
     const mountPoints = config?.services?.mountPoints || [''];
-    const manifest = getPackageManifest(this.mainDir);
+    
     this.packageManifests.push(manifest);
-    const packageDependencies = getPackageDependencies(manifest);
+    const packageDependencies = lscSettings?.packageDependencies || getPackageDependencies(manifest);
 
     for(const mountPoint of mountPoints) {
       // mount legacy API routes from the current module
       this.mountLegacyApiDirectory(this.application, this.mainDir, mountPoint);
 
       // mount legacy API routes from package dependencies
-      for (const dependency of packageDependencies) {
+      for (const dependencyObj of packageDependencies) {
+        const dependency = _.isString(dependencyObj)?dependencyObj:dependencyObj.key;
         const dependencyPath = resolve(dependency, {cwd: this.mainDir});
         if (!dependencyPath) {
           throw new Error(`Dependency: "${dependency}" required by "${this.mainDir}" could not be found. Is it installed?`);
