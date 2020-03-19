@@ -1,0 +1,20 @@
+{
+    "name": "loopback-app-package",
+    "version": "0.0.1",
+    "main": "index.js",
+    "lsc":{
+    "loopbackApi":{
+        "name":"test-api"
+    },
+    "packageDependencies": {
+        "loopback-api-package-1": {"name":"loopback-api", 
+            "basePath":"/loopback" , 
+            "isLoopbackApi":true}
+    }
+    },
+   
+    "dependencies": {
+      "uuid": "^3.3.2"
+    }
+  }
+  

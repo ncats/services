@@ -31,14 +31,6 @@ export class LoopbackLoader {
         this.apis = [];
         this.config = config;
     }
-
-    /**
-     * gets the Api settings from the config file
-     * @return {config}
-     */
-    public getApiSettings(config: any, api: string) {
-        return _.get(config, api);
-    }
     /**
      * loads all the loopback apis from the package dependency
      * @param {location}
@@ -48,7 +40,7 @@ export class LoopbackLoader {
         this.apis = [];
         const manifest = Utils.getPackageManifest(this.mainDir);
         const lscSettings = Utils.getPackageLscSettings(manifest);
-        const dependecies = lscSettings?.getPackageDependencies || Utils.getPackageDependencies(manifest);
+        const dependecies = lscSettings?.packageDependencies || Utils.getPackageDependencies(manifest);
         const lbApis:LoopbackApi[] = [];
         const loopbackApiSettings: LoopbackApiSettings = lscSettings?.loopbackApi;
         /* if the local project has an api */
@@ -81,8 +73,8 @@ export class LoopbackLoader {
     public getApis(): LoopbackApi[] {
         return this.apis;
     }
-    private setApiFormat(api:LoopbackApi , module:any ){
-        const apiConfig = this.getApiSettings(this.config, api.configAlias || api.name);
+    public setApiFormat(api:LoopbackApi , module:any ){
+        const apiConfig = _.get(this.config, api.configAlias || api.name);
         let basePath:string = api.basePath || apiConfig?.basePath || api.name;
         basePath =  basePath.startsWith('/')?basePath: `/${basePath}`;
         return { name: api.name, app: new module.app(this.config),basePath };
