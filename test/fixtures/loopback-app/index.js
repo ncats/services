@@ -1,9 +1,9 @@
 
-class Helper{
+class App{
     constructor(){
     }
 }
 
 module.exports={
-    app:Helper
+    app:App
 }
