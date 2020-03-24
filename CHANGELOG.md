@@ -1,3 +1,13 @@
+# [4.3.0](https://github.com/LabShare/services/compare/v4.2.0...v4.3.0) (2020-03-24)
+
+
+### Features
+
+* documentation ([1f12a1d](https://github.com/LabShare/services/commit/1f12a1df936d6f75a9b0b45bd4b6db5bbc23d64a))
+* support for loading loopback apis ([36a0f82](https://github.com/LabShare/services/commit/36a0f824413703bdf54eee49980c2e0bc2bb0672))
+* support for loobpack apis ([a01547b](https://github.com/LabShare/services/commit/a01547bf276d4afa3378e97f07c1480b60061825))
+* test for loading loopback apps ([e8ecc60](https://github.com/LabShare/services/commit/e8ecc600f2587e61ed95dfdbba9fc7c1e6d46c4b))
+
 # [4.2.0](https://github.com/LabShare/services/compare/v4.1.1...v4.2.0) (2020-03-11)
 
 
