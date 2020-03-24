@@ -15,7 +15,7 @@ import * as VError from 'verror';
 import {createVersionsController} from './versions.controller';
 import {AUTHENTICATION_METADATA_KEY, AuthenticationMetadata} from '@labshare/services-auth';
 
-const {getPackageDependencies, getPackageName, getPackageManifest}  = require('../api/utils');
+const {getPackageDependencies, getPackageName, getPackageManifest , getPackageLscSettings}  = require('../api/utils');
 const METHODS_KEY = MetadataAccessor.create<Injection, MethodDecorator>('inject:methods');
 const PATH_PARAMS_REGEX = /[\/?]:(.*?)(?![^\/])/g;
 
@@ -28,18 +28,21 @@ export class LegacyLoaderComponent implements Component {
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) private application: Application) {
     const config = this.application.options;
     this.mainDir = config?.services?.main || process.cwd();
-    this.apiFilePattern = config?.services?.pattern || '{src/api,api}/*.js';
-    const mountPoints = config?.services?.mountPoints || [''];
     const manifest = getPackageManifest(this.mainDir);
+    const lscSettings = getPackageLscSettings(manifest);
+    this.apiFilePattern = lscSettings?.apiPattern ||  config?.services?.pattern || '{src/api,api}/*.js';
+    const mountPoints = config?.services?.mountPoints || [''];
+    
     this.packageManifests.push(manifest);
-    const packageDependencies = getPackageDependencies(manifest);
+    const packageDependencies = lscSettings?.packageDependencies || getPackageDependencies(manifest);
 
     for(const mountPoint of mountPoints) {
       // mount legacy API routes from the current module
       this.mountLegacyApiDirectory(this.application, this.mainDir, mountPoint);
 
       // mount legacy API routes from package dependencies
-      for (const dependency of packageDependencies) {
+      for (const dependencyObj of packageDependencies) {
+        const dependency = _.isString(dependencyObj)?dependencyObj:dependencyObj.key;
         const dependencyPath = resolve(dependency, {cwd: this.mainDir});
         if (!dependencyPath) {
           throw new Error(`Dependency: "${dependency}" required by "${this.mainDir}" could not be found. Is it installed?`);

@@ -90,6 +90,7 @@ http://localhost:8000/explorer
 
 ## Working with LabShare APIs
 ### [Running APIs](docs/run-package.md)
+### [Running Loopback APIs](docs/loopback-apis.md)
 ### [Creating HTTP APIs](docs/http-apis.md)
 ### [Creating Socket APIs](docs/socket-apis.md)
 ### [Managing APIs with PM2](docs/pm2-services.md)
