@@ -56,6 +56,7 @@ describe('Services', () => {
         });
 
         expect(_.get(global, 'LabShare.IO')).toBeUndefined();
+        expect(_.get(global, 'LabShare.Notifications')).toBeUndefined();
 
         server = await services.start();
 
