@@ -1,3 +1,10 @@
+# [4.4.0](https://github.com/LabShare/services/compare/v4.3.0...v4.4.0) (2020-04-01)
+
+
+### Features
+
+* add services-notifications - FCS-188 ([ee5e850](https://github.com/LabShare/services/commit/ee5e8505299c4a1402f20837d39d3c3d6820af2d))
+
 # [4.3.0](https://github.com/LabShare/services/compare/v4.2.0...v4.3.0) (2020-03-24)
 
 
