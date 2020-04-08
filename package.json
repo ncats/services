@@ -38,7 +38,7 @@
     "@labshare/services-cache": "^1.19.0",
     "@labshare/services-health": "^1.0.5",
     "@labshare/services-logger": "^1.1.5",
-    "@labshare/services-notifications": "^1.0.0",
+    "@labshare/services-notifications": "^1.0.3",
     "@loopback/boot": "^1.5.12",
     "@loopback/context": "^1.24.0",
     "@loopback/core": "^1.11.0",
