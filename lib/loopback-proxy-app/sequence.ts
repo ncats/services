@@ -4,6 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {Context, inject} from '@loopback/context';
+import {ApplicationConfig, CoreBindings} from '@loopback/core';
 import {FindRoute, InvokeMethod, ParseParams, Reject, RequestContext, RestBindings, Send, SequenceHandler} from '@loopback/rest';
 import {LabShareLogger, LogBindings} from '@labshare/services-logger';
 import {AuthenticateFn, AuthenticationBindings} from '@labshare/services-auth';
@@ -20,6 +21,8 @@ export class LabShareSequence implements SequenceHandler {
     @inject(SequenceActions.REJECT) public reject: Reject,
     @inject(LogBindings.LOGGER) protected logger: LabShareLogger,
     @inject(AuthenticationBindings.AUTH_ACTION) protected authenticateRequest: AuthenticateFn,
+    @inject(AuthenticationBindings.USER_INFO_ACTION) protected setUserInfo: AuthenticateFn,
+    @inject(CoreBindings.APPLICATION_CONFIG) protected config: ApplicationConfig
   ) {}
 
   async handle(context: RequestContext) {
@@ -29,7 +32,12 @@ export class LabShareSequence implements SequenceHandler {
       const route = this.findRoute(request);
       request.params = route.pathParams;
       const args = await this.parseParams(request, route);
-      await this.authenticateRequest(request, response);
+      if (!this.config?.services?.auth?.disable && !process.env.DISABLE_AUTH) {
+        await this.authenticateRequest(request, response);
+      }
+      if (this.config?.services?.auth?.setUserInfo) {
+        await this.setUserInfo(request, response);
+      }
       const result = await this.invoke(route, args);
       this.send(response, result);
     } catch (error) {
