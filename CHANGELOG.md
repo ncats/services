@@ -1,3 +1,10 @@
+# [4.5.0](https://github.com/LabShare/services/compare/v4.4.0...v4.5.0) (2020-04-08)
+
+
+### Features
+
+* added options to disable authentication and set user info ([6a017b5](https://github.com/LabShare/services/commit/6a017b5c6952cb7e1c0d0cfc117be585e345f9c7))
+
 # [4.4.0](https://github.com/LabShare/services/compare/v4.3.0...v4.4.0) (2020-04-01)
 
 
