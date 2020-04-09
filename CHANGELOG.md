@@ -1,3 +1,10 @@
+## [4.5.1](https://github.com/LabShare/services/compare/v4.5.0...v4.5.1) (2020-04-09)
+
+
+### Bug Fixes
+
+* path parameters get lower-cased ([71ed923](https://github.com/LabShare/services/commit/71ed92319ea93b4fe61efe0fa5208caf40ba84f4))
+
 # [4.5.0](https://github.com/LabShare/services/compare/v4.4.0...v4.5.0) (2020-04-08)
 
 
