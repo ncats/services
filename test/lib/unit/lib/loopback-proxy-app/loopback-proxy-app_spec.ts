@@ -65,6 +65,11 @@ describe('Loopback Proxy App', () => {
     await request.get('/test-facility/4d-api-package/list/mylist/items/123').expect(200);
   });
 
+  it('preserves path parameter casing', async () => {
+    const result = await request.get('/test-facility/4d-api-package/list/mylist/items/PaRaMeTeR').expect(200);
+    expect(result.body.id).to.equal('PaRaMeTeR');
+  });
+
   it('returns unauthorized for secured routes', async () => {
     await request.get('/test-facility/4d-api-package/secured1').expect(401);
     await request.get('/test-facility/4d-api-package/secured2').expect(401);
