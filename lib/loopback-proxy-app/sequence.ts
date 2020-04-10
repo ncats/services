@@ -4,7 +4,17 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {Context, inject} from '@loopback/context';
-import {FindRoute, InvokeMethod, ParseParams, Reject, RequestContext, RestBindings, Send, SequenceHandler} from '@loopback/rest';
+import {ApplicationConfig, CoreBindings} from '@loopback/core';
+import {
+  FindRoute,
+  InvokeMethod,
+  ParseParams,
+  Reject,
+  RequestContext, ResolvedRoute, ControllerRoute,
+  RestBindings,
+  Send,
+  SequenceHandler
+} from '@loopback/rest';
 import {LabShareLogger, LogBindings} from '@labshare/services-logger';
 import {AuthenticateFn, AuthenticationBindings} from '@labshare/services-auth';
 
@@ -20,16 +30,30 @@ export class LabShareSequence implements SequenceHandler {
     @inject(SequenceActions.REJECT) public reject: Reject,
     @inject(LogBindings.LOGGER) protected logger: LabShareLogger,
     @inject(AuthenticationBindings.AUTH_ACTION) protected authenticateRequest: AuthenticateFn,
+    @inject(AuthenticationBindings.USER_INFO_ACTION) protected setUserInfo: AuthenticateFn,
+    @inject(CoreBindings.APPLICATION_CONFIG) protected config: ApplicationConfig
   ) {}
 
   async handle(context: RequestContext) {
     const {request, response} = context;
     try {
+      const originalUrl = request.url;
+      // lower case url so that LB4 router could find the controller route
       request.url = this.pathToLowerCase(request.url);
       const route = this.findRoute(request);
+      // restore casing of route parameter values
+      if (route instanceof ControllerRoute && originalUrl !== request.url) {
+        this.restoreParamCasing(originalUrl, route);
+      }
+      request.url = originalUrl;
       request.params = route.pathParams;
       const args = await this.parseParams(request, route);
-      await this.authenticateRequest(request, response);
+      if (!this.config?.services?.auth?.disable && !process.env.DISABLE_AUTH) {
+        await this.authenticateRequest(request, response);
+      }
+      if (this.config?.services?.auth?.setUserInfo) {
+        await this.setUserInfo(request, response);
+      }
       const result = await this.invoke(route, args);
       this.send(response, result);
     } catch (error) {
@@ -48,5 +72,22 @@ export class LabShareSequence implements SequenceHandler {
     const urlParts = url.split('?');
     urlParts[0] = urlParts[0].toLowerCase();
     return urlParts.join('?');
+  }
+
+  /**
+   * Sets route parameter values to the values in the original URL from the incoming requesr
+   * @param originalUrl - original (not lower-cased) URL from the incoming request
+   * @param route object
+   */
+  private restoreParamCasing(originalUrl: string, route: ResolvedRoute) {
+    const originalPath = originalUrl.split('?')[0];
+    const pathParts = originalPath.split('/');
+    const routePathParts = route.path.split('/');
+    for (let i = 0; i < routePathParts.length; i++) {
+      const paramMatch = routePathParts[i].match(/{(.*)}/);
+      if (paramMatch) {
+        route.pathParams[paramMatch[1]] = decodeURI(pathParts[i]);
+      }
+    }
   }
 }
