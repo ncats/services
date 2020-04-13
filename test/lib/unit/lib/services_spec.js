@@ -38,7 +38,15 @@ describe('Services', () => {
                     listen: {
                         port
                     },
-                    connections: []
+                    connections: [],
+                    notifications: {
+                        sms: {
+                            settings: {
+                                accountSid: 'ACtestAccountSid',
+                                authToken: "testAuthToken",
+                            }
+                        }
+                    }
                 }} ;
 
             services = new Services(options);
@@ -69,6 +77,7 @@ describe('Services', () => {
         expect(data.headers['x-dns-prefetch-control']).toBe('off');
         expect(data.headers['referrer-policy']).toBe('no-referrer');
         expect(data.headers['x-xss-protection']).toBe('1; mode=block');
+        expect(_.get(global, 'LabShare.Notifications')).toBeDefined();
    });
 
    it('provides status endpoint', async () => {
