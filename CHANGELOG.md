@@ -1,3 +1,12 @@
+## [4.5.2](https://github.com/LabShare/services/compare/v4.5.1...v4.5.2) (2020-04-14)
+
+
+### Bug Fixes
+
+* check if notification settings are present ([071993a](https://github.com/LabShare/services/commit/071993a6d750bf68d58024be6cd98490b6ce00be))
+* update test for notification service ([f811446](https://github.com/LabShare/services/commit/f811446dda3198a6bee3a7df72cbda61b44ac896))
+* use this._options to create notification service - FCS-188 ([91f53df](https://github.com/LabShare/services/commit/91f53dfb37b8caa931a22fe686186fbf5150ff5e))
+
 ## [4.5.1](https://github.com/LabShare/services/compare/v4.5.0...v4.5.1) (2020-04-09)
 
 
