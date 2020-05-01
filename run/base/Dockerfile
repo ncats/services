@@ -4,7 +4,7 @@ RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh tzdata
 
 # Add global node packages
-RUN npm i -g lsc
+RUN npm i -g @labshare/lsc
 
 COPY motd /etc/motd
 
