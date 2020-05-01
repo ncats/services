@@ -1,3 +1,10 @@
+## [4.5.3](https://github.com/LabShare/services/compare/v4.5.2...v4.5.3) (2020-05-01)
+
+
+### Bug Fixes
+
+* apm issue for stating services command ([1042482](https://github.com/LabShare/services/commit/10424829e7fd58fa4385e13dac06cd4b5b63415d))
+
 ## [4.5.2](https://github.com/LabShare/services/compare/v4.5.1...v4.5.2) (2020-04-14)
 
 
