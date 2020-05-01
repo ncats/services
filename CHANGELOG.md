@@ -1,3 +1,10 @@
+## [4.5.4](https://github.com/LabShare/services/compare/v4.5.3...v4.5.4) (2020-05-01)
+
+
+### Bug Fixes
+
+* base docker image ([bd2cfe6](https://github.com/LabShare/services/commit/bd2cfe6409bd667c33a1962784873957da2f90d2))
+
 ## [4.5.3](https://github.com/LabShare/services/compare/v4.5.2...v4.5.3) (2020-05-01)
 
 
