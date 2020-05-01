@@ -1,5 +1,6 @@
 'use strict';
-
+const apm = require('elastic-apm-node');
+const dotEnv = require('dotenv');
 const Services = require('../lib/services');
 const _ = require('lodash');
 const servicesCache = require('@labshare/services-cache').Middleware;
@@ -7,7 +8,9 @@ const path = require('path');
 const yargs = require('yargs');
 const {buildService, getBuildDate} = require('../lib/cli/build-service');
 const log = require('fancy-log');
-
+// Load environment variables using a local .env file (see: https://www.npmjs.com/package/dotenv)
+// TODO: Replace this with option inside config:{services}
+dotEnv.config({ path: path.join(process.cwd(), '.env') })
 exports.usage = [
   'lsc services start      - Start up LabShare API services.',
   'lsc services build      - Build LabShare API services.',
@@ -16,6 +19,10 @@ exports.usage = [
 
 exports.start = async function () {
   log.info('Starting LabShare services...');
+  // TODO: Replace this with option inside config:{services}
+  if(process.env.ELASTIC_APM_SERVER_URL) {
+    apm.start();
+  }
 
   const config = _.get(global, 'LabShare.Config');
   const services = new Services(config);
