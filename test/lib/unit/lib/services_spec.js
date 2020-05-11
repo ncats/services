@@ -77,6 +77,8 @@ describe('Services', () => {
         expect(data.headers['x-dns-prefetch-control']).toBe('off');
         expect(data.headers['referrer-policy']).toBe('no-referrer');
         expect(data.headers['x-xss-protection']).toBe('1; mode=block');
+        expect(data.headers['access-control-allow-origin']).toBe('*');
+        expect(data.headers['access-control-allow-credentials']).toBe('true');
         expect(_.get(global, 'LabShare.Notifications')).toBeDefined();
    });
 
