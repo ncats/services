@@ -1,3 +1,10 @@
+## [4.5.5](https://github.com/LabShare/services/compare/v4.5.4...v4.5.5) (2020-05-11)
+
+
+### Bug Fixes
+
+* added CORS middleware ([a8ed0b3](https://github.com/LabShare/services/commit/a8ed0b3fd9bb70a06a183e3e2646a18e168d12c3))
+
 ## [4.5.4](https://github.com/LabShare/services/compare/v4.5.3...v4.5.4) (2020-05-01)
 
 
