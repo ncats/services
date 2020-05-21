@@ -1,3 +1,11 @@
+# [4.7.0](https://github.com/LabShare/services/compare/v4.6.0...v4.7.0) (2020-05-21)
+
+
+### Features
+
+* add LabShare Logger as a global module - FCS-161 ([72648f6](https://github.com/LabShare/services/commit/72648f6d7f502827f3d20a0c60075dde4ebeea44))
+* use LabShare Logger as main logger in services ([e17d5b3](https://github.com/LabShare/services/commit/e17d5b3ad873b26e48d4bc1cd9a3e2d9a153c9f3))
+
 # [4.6.0](https://github.com/LabShare/services/compare/v4.5.5...v4.6.0) (2020-05-21)
 
 
