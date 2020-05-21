@@ -28,7 +28,8 @@ describe('Services', () => {
 
             port = unusedPort;
 
-            options = {services: {
+            options = {
+                services: {
                     logger: loggerMock,
                     mountPoints: ['/:facilityId'],
                     main: packagesPath,
@@ -46,8 +47,17 @@ describe('Services', () => {
                                 authToken: "testAuthToken",
                             }
                         }
+                    },
+                    log: {
+                        fluentD: {
+                            tag: 'LabShare Services Test',
+                        },
+                        console: false,
+                        level: 'info',
+                        enableMetadata: true,
                     }
-                }} ;
+                }
+            };
 
             services = new Services(options);
             done();
@@ -65,6 +75,7 @@ describe('Services', () => {
 
         expect(_.get(global, 'LabShare.IO')).toBeUndefined();
         expect(_.get(global, 'LabShare.Notifications')).toBeUndefined();
+        expect(_.get(global, 'LabShare.Logger')).toBeUndefined();
 
         server = await services.start();
 
@@ -80,6 +91,7 @@ describe('Services', () => {
         expect(data.headers['access-control-allow-origin']).toBe('*');
         expect(data.headers['access-control-allow-credentials']).toBe('true');
         expect(_.get(global, 'LabShare.Notifications')).toBeDefined();
+        expect(_.get(global, 'LabShare.Logger')).toBeDefined();
    });
 
    it('provides status endpoint', async () => {
