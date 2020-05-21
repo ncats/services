@@ -1,3 +1,10 @@
+# [4.6.0](https://github.com/LabShare/services/compare/v4.5.5...v4.6.0) (2020-05-21)
+
+
+### Features
+
+* export cli functions ([5c0e0a8](https://github.com/LabShare/services/commit/5c0e0a8d25f52dd4e06db4f517e4b0668e35a118))
+
 ## [4.5.5](https://github.com/LabShare/services/compare/v4.5.4...v4.5.5) (2020-05-11)
 
 
