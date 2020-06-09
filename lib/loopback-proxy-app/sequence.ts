@@ -55,6 +55,11 @@ export class LabShareSequence implements SequenceHandler {
         await this.setUserInfo(request, response);
       }
       const result = await this.invoke(route, args);
+      this.logger.info(request.url, {
+        url: request.url,
+        method: request.method,
+        params: request.params
+      });
       this.send(response, result);
     } catch (error) {
       this.logger.error(request.url, error.stack, {
