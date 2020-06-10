@@ -1,3 +1,10 @@
+# [4.8.0](https://github.com/LabShare/services/compare/v4.7.0...v4.8.0) (2020-06-10)
+
+
+### Features
+
+* add logger for successful API responses - FCS-301 ([f40bb13](https://github.com/LabShare/services/commit/f40bb13eb02356c5e81c1b5d22205f3abc5e2e24))
+
 # [4.7.0](https://github.com/LabShare/services/compare/v4.6.0...v4.7.0) (2020-05-21)
 
 
