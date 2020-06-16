@@ -18,28 +18,36 @@ Default:
 
 ### restApiRoot
 
-The `restApiRoot` is the mountpoint the HTTP APIs will be set on. Default: '/'.
+The `restApiRoot` is the root mount point the HTTP APIs will be set on. Default: '/'.
 
 Example:
 ```json
 "restApiRoot": "/_api"
 ```
 
-### Socket
+### auth
 
-#### connections
+The `auth` properties defines options for interacting with LabShare Auth
 
-The `connections` option can be used to establish P2P socket connections on start up. It defaults to an empty array.
+|  Property   | Type | Description |
+| ------------- | ------------- | ------------- |
+| tenant   | string | The LabShare Auth Tenant the Resource Server (API) is registered to. Examples: `ls`, `ncats`.                                                                                                                                                                                                                    |
+| url  | string | The full URL to the LabShare Auth API the Resource Server (API) is registered to. Example: `https://a.labshare.org`                                                                                                                                                                                       |
+| clientId  | string | Id of the Auth client application to be used for authentication. Example: `ls-default-ng-app`                                        
+| audience | string | The audience of the Resource Server. This is a unique identifier for the API registered on the LabShare Auth Service. It does not need match an actual API deployment host. This is required to check if a Client (application) is allowed to access the API. Optional. Example: `https://my.api.com/v2`. |
+| setUserInfo | boolean  | When set to true, gets information about currently logged in user and add puts it into  *`request.userInfo`* variable. Optional. Example: `true`. |
 
-Example:
-```json
-"socket": {
-    "connections": [
-        "http://domain1.com/users",
-        "http://domain2.com/kittens"
-    ]
-}
-```
+### mountPoints
+
+Optional. 
+Ann array of `strings` which specifies mount points (relative to restApiRoot) on which API routes will be mounted. 
+By default all API routes are mounted directly under `restApiRoot` (Example: http://localhoost:8000/apiRoot/projects).
+If multiple mount points are specified then API routes will be mounted on ALL specified mount points.
+Foe example if mountPoints: ['', '/point1'], then TWO `/projects` routes will be created: `http://localhoost:8000/apiRoot/projects` and
+`http://localhoost:8000/apiRoot/point1/projects`. 
+Express.js path parameters can also be used. For example mountPoints: ['', '/:facilityId'].     
+
+It is recommended not to use `mountPoints` unless it is required for backward compatibility of the legacy UI applications, which may expect same routes to be exposed on different mount points.
 
 After establishing a connection, events can be broadcast to the connections using the `io` instance exposed by `LabShare Services`.
 
@@ -56,6 +64,37 @@ Example:
   }
 }
 ```
+
+### Notifications
+
+the `notifications` specifies options to bbe used for sending notifications. Currently Email nad SMS notifications are supported.
+
+Example
+```json5
+    "notifications": {
+      "email": {
+        "type": "smtp",
+        "settings": {
+          "host": "mailfwd.nih.gov",
+          "port": 25,
+          "secure": false,
+          "tls": {
+            "rejectUnauthorized": false
+          }
+        }
+      },
+      "sms": {
+        "settings": { // Twillio settings 
+          "accountSid": "...", 
+          "authToken": "...",
+          "defaultTelephoneNumber": "+12021234567"
+        }
+      }
+    }
+  },
+```
+
+
 
 ### Security
 
