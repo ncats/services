@@ -17,6 +17,7 @@ import {
 } from '@loopback/rest';
 import {LabShareLogger, LogBindings} from '@labshare/services-logger';
 import {AuthenticateFn, AuthenticationBindings} from '@labshare/services-auth';
+import {RequestWithUserInfo} from '@labshare/services-auth/dist/src/providers';
 
 const SequenceActions = RestBindings.SequenceActions;
 
@@ -58,7 +59,8 @@ export class LabShareSequence implements SequenceHandler {
       this.logger.info(request.url, {
         url: request.url,
         method: request.method,
-        params: request.params
+        params: request.params,
+        userInfo: (request as RequestWithUserInfo).userInfo
       });
       this.send(response, result);
     } catch (error) {
