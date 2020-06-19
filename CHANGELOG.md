@@ -1,3 +1,10 @@
+# [4.9.0](https://github.com/LabShare/services/compare/v4.8.0...v4.9.0) (2020-06-19)
+
+
+### Features
+
+* add userInfo to logger - FCS-324 ([59dd721](https://github.com/LabShare/services/commit/59dd7210a55c00699d65ea386fd0c8225218a5ef))
+
 # [4.8.0](https://github.com/LabShare/services/compare/v4.7.0...v4.8.0) (2020-06-10)
 
 
