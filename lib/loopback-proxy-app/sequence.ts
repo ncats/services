@@ -16,8 +16,10 @@ import {
   SequenceHandler
 } from '@loopback/rest';
 import {LabShareLogger, LogBindings} from '@labshare/services-logger';
-import {AuthenticateFn, AuthenticationBindings} from '@labshare/services-auth';
+import {AuthenticateFn, AuthenticationBindings, getAuthenticateMetadata} from '@labshare/services-auth';
 import {RequestWithUserInfo} from '@labshare/services-auth/dist/src/providers';
+import {MetadataInspector} from '@loopback/context';
+import {AUTHENTICATION_METADATA_KEY, AuthenticationMetadata} from '@labshare/services-auth';
 
 const SequenceActions = RestBindings.SequenceActions;
 
@@ -42,7 +44,6 @@ export class LabShareSequence implements SequenceHandler {
       // lower case url so that LB4 router could find the controller route
       request.url = this.pathToLowerCase(request.url);
       const route = this.findRoute(request);
-      // restore casing of route parameter values
       if (route instanceof ControllerRoute && originalUrl !== request.url) {
         this.restoreParamCasing(originalUrl, route);
       }
@@ -52,7 +53,8 @@ export class LabShareSequence implements SequenceHandler {
       if (!this.config?.services?.auth?.disable && !process.env.DISABLE_AUTH) {
         await this.authenticateRequest(request, response);
       }
-      if (this.config?.services?.auth?.setUserInfo) {
+      const authMetadata = await this.getAuthMetadata(context);
+      if (this.config?.services?.auth?.setUserInfo && authMetadata && !process.env.DISABLE_AUTH) {
         await this.setUserInfo(request, response);
       }
       const result = await this.invoke(route, args);
@@ -96,5 +98,16 @@ export class LabShareSequence implements SequenceHandler {
         route.pathParams[paramMatch[1]] = decodeURI(pathParts[i]);
       }
     }
+  }
+
+  /**
+   * Gets authentication metatata for the current controller method
+   * @param context Request context
+   */
+  private async getAuthMetadata(context: RequestContext): Promise<AuthenticationMetadata | undefined> {
+    const controller = await context.getBinding(CoreBindings.CONTROLLER_CURRENT).getValue(context) as Object;
+    const method = await context.getBinding(CoreBindings.CONTROLLER_METHOD_NAME).getValue(context);
+    const metadata = MetadataInspector.getMethodMetadata<AuthenticationMetadata>(AUTHENTICATION_METADATA_KEY, controller, method);
+    return  metadata;
   }
 }
