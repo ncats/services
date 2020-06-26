@@ -1,3 +1,10 @@
+# [4.10.0](https://github.com/LabShare/services/compare/v4.9.1...v4.10.0) (2020-06-26)
+
+
+### Features
+
+* add body from request to logger - FCS-250 ([bb1677d](https://github.com/LabShare/services/commit/bb1677dcd2bfd1b0aa89e57c95b677a19e257319))
+
 ## [4.9.1](https://github.com/LabShare/services/compare/v4.9.0...v4.9.1) (2020-06-26)
 
 
