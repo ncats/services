@@ -1,3 +1,11 @@
+## [4.9.1](https://github.com/LabShare/services/compare/v4.9.0...v4.9.1) (2020-06-26)
+
+
+### Bug Fixes
+
+* skip setting user info for unauthenticated routes ([a5cc2b8](https://github.com/LabShare/services/commit/a5cc2b885ecdcc59096700490805a7099423caa5))
+* skip setting userInfo for external routes ([b4d5c9c](https://github.com/LabShare/services/commit/b4d5c9c78d9cba308d1a1a6280df5414fa543e16))
+
 # [4.9.0](https://github.com/LabShare/services/compare/v4.8.0...v4.9.0) (2020-06-19)
 
 

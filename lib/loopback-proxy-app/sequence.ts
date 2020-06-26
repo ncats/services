@@ -53,9 +53,11 @@ export class LabShareSequence implements SequenceHandler {
       if (!this.config?.services?.auth?.disable && !process.env.DISABLE_AUTH) {
         await this.authenticateRequest(request, response);
       }
-      const authMetadata = await this.getAuthMetadata(context);
-      if (this.config?.services?.auth?.setUserInfo && authMetadata && !process.env.DISABLE_AUTH) {
-        await this.setUserInfo(request, response);
+      if (route instanceof ControllerRoute) {
+        const authMetadata = await this.getAuthMetadata(context);
+        if (this.config?.services?.auth?.setUserInfo && authMetadata && !process.env.DISABLE_AUTH) {
+          await this.setUserInfo(request, response);
+        }
       }
       const result = await this.invoke(route, args);
       this.logger.info(request.url, {
