@@ -64,6 +64,7 @@ export class LabShareSequence implements SequenceHandler {
         url: request.url,
         method: request.method,
         params: request.params,
+        body: request.body,
         userInfo: (request as RequestWithUserInfo).userInfo
       });
       this.send(response, result);
