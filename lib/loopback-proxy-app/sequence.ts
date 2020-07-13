@@ -57,6 +57,7 @@ export class LabShareSequence implements SequenceHandler {
         const authMetadata = await this.getAuthMetadata(context);
         if (this.config?.services?.auth?.setUserInfo && authMetadata && !process.env.DISABLE_AUTH) {
           await this.setUserInfo(request, response);
+          request.user = request.userInfo; // some apps expect user data to be in request.user
         }
       }
       const result = await this.invoke(route, args);
