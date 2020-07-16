@@ -1,3 +1,10 @@
+## [4.10.1](https://github.com/LabShare/services/compare/v4.10.0...v4.10.1) (2020-07-16)
+
+
+### Bug Fixes
+
+* set request.user ([900bd0a](https://github.com/LabShare/services/commit/900bd0afd20befae1ce2c02b66065db80e6a5ae1))
+
 # [4.10.0](https://github.com/LabShare/services/compare/v4.9.1...v4.10.0) (2020-06-26)
 
 
