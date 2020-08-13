@@ -1,3 +1,10 @@
+## [4.10.2](https://github.com/LabShare/services/compare/v4.10.1...v4.10.2) (2020-08-13)
+
+
+### Bug Fixes
+
+* **config:** remove invalid default audience value ([c4ea1d8](https://github.com/LabShare/services/commit/c4ea1d81c0001019a59c613734ee00bebd21f872))
+
 ## [4.10.1](https://github.com/LabShare/services/compare/v4.10.0...v4.10.1) (2020-07-16)
 
 
