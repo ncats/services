@@ -3,7 +3,7 @@ import {ApplicationConfig} from '@loopback/core';
 import {RestExplorerComponent} from '@loopback/rest-explorer';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
-import * as path from 'path';
+import {join} from 'path';
 import {LabShareSequence} from './sequence';
 import {LegacyLoaderComponent} from './legacy-loader.component';
 import {HealthComponent} from '@labshare/services-health';
@@ -20,11 +20,11 @@ export class LoopbackProxyApplication extends BootMixin(RepositoryMixin(RestAppl
     this.bind(AuthenticationBindings.AUTH_CONFIG).to({
       authUrl: options?.services?.auth?.url || options?.auth?.url || 'https://a.labshare.org/_api',
       tenant: options?.services?.auth?.tenant || options?.services?.auth?.organization || 'ls',
-      audience: options?.services?.auth?.audience || 'ls-api'
+      audience: options?.services?.auth?.audience
     });
 
     // Set up default home page
-    this.static('/', path.join(__dirname, '../public'));
+    this.static('/', join(__dirname, '../public'));
 
     this.component(RestExplorerComponent);
     this.projectRoot = __dirname;
