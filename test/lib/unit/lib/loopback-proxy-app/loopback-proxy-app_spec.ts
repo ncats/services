@@ -94,7 +94,7 @@ describe('Loopback Proxy App', () => {
         pattern: '{src/api,api}/*.js',
         auth: {
           tenant: 'ls',
-          audience: 'ls-api'
+          audience: 'https://example.com'
         }
       },
       auth: {
