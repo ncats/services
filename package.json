@@ -2,7 +2,7 @@
   "name": "@labshare/services",
   "namespace": "services",
   "main": "./",
-  "version": "4.10.2",
+  "version": "4.10.3",
   "description": "LabShare API service manager",
   "contributors": "https://github.com/LabShare/services/graphs/contributors",
   "repository": {

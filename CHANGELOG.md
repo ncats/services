@@ -1,3 +1,10 @@
+## [4.10.3](https://github.com/LabShare/services/compare/v4.10.2...v4.10.3) (2020-08-17)
+
+
+### Bug Fixes
+
+* package.json & package-lock.json to reduce vulnerabilities ([7e30bb1](https://github.com/LabShare/services/commit/7e30bb1592018841970ccd3a6436bf1c35965d26))
+
 ## [4.10.2](https://github.com/LabShare/services/compare/v4.10.1...v4.10.2) (2020-08-13)
 
 
