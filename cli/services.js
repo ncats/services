@@ -26,11 +26,12 @@ exports.start = async function () {
 
   const config = _.get(global, 'LabShare.Config');
   const services = new Services(config);
+  const corsSettings = _.get(config, 'services.cors');
 
   services.config(({app}) => {
     // Enable response compression and CORS
     app.use(require('compression')());
-    app.use(require('cors')());
+    app.use(require('cors')(corsSettings));
   });
 
   if (_.get(config, 'shell.Cache.enable')) {

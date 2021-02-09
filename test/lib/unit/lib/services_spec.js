@@ -71,6 +71,7 @@ describe('Services', () => {
     it('sets default configuration', async () => {
         services.config(({app}) => {
             expect(app).toBeDefined();
+            expect(app.use(require('cors')())).toBeDefined();
         });
 
         expect(_.get(global, 'LabShare.IO')).toBeUndefined();
@@ -97,6 +98,7 @@ describe('Services', () => {
    it('provides status endpoint', async () => {
      services.config(({app}) => {
        expect(app).toBeDefined();
+       expect(app.use(require('cors')())).toBeDefined();
      });
      server = await services.start();
      let request = supertest(server);
