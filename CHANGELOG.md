@@ -1,3 +1,11 @@
+## [4.10.4](https://github.com/LabShare/services/compare/v4.10.3...v4.10.4) (2021-02-09)
+
+
+### Bug Fixes
+
+* add test coverage ([28e33a7](https://github.com/LabShare/services/commit/28e33a75af04ff7feb37ca648c61e54ef83aeba8))
+* ahsr 1715 updated the const name to corsSettings ([a84de36](https://github.com/LabShare/services/commit/a84de36186eb6c773ab085987968e2574f96c3f1))
+
 ## [4.10.3](https://github.com/LabShare/services/compare/v4.10.2...v4.10.3) (2020-08-17)
 
 
