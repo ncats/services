@@ -1,3 +1,10 @@
+## [4.10.5](https://github.com/LabShare/services/compare/v4.10.4...v4.10.5) (2021-07-30)
+
+
+### Bug Fixes
+
+* updated @labshare/services-cache version ([cadaaf2](https://github.com/LabShare/services/commit/cadaaf2df01e78db3e815d4af6b2520077c2acec))
+
 ## [4.10.4](https://github.com/LabShare/services/compare/v4.10.3...v4.10.4) (2021-02-09)
 
 
