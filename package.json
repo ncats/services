@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@labshare/services-auth": "^3.3.0",
-    "@labshare/services-cache": "^1.19.0",
+    "@labshare/services-cache": "^1.19.1",
     "@labshare/services-health": "^1.0.5",
     "@labshare/services-logger": "^1.1.6",
     "@labshare/services-notifications": "^1.0.3",
