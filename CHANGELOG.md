@@ -1,3 +1,10 @@
+# [4.11.0](https://github.com/LabShare/services/compare/v4.10.5...v4.11.0) (2021-11-24)
+
+
+### Features
+
+* update snyk SR-8 ([a49dba9](https://github.com/LabShare/services/commit/a49dba932a5d962afc606a94c4eb10cbea7249f2))
+
 ## [4.10.5](https://github.com/LabShare/services/compare/v4.10.4...v4.10.5) (2021-07-30)
 
 
