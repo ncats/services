@@ -82,7 +82,7 @@
     "@commitlint/cli": "^7.0.0",
     "@commitlint/config-conventional": "^7.1.2",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@loopback/build": "^2.1.0",
+    "@loopback/build": "^9.0.6",
     "@loopback/http-caching-proxy": "^1.2.2",
     "@loopback/repository": "^1.8.0",
     "@loopback/testlab": "^1.9.5",
